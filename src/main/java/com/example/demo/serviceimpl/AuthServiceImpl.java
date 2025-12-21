@@ -1,7 +1,6 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.AuthLoginRequest;
-import com.example.demo.dto.AuthRegisterRequest;
+import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
@@ -15,13 +14,12 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
 
-    // ✅ Constructor Injection
     public AuthServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public AuthResponse register(AuthRegisterRequest request) {
+    public AuthResponse register(AuthRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
@@ -30,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword()); // ❌ No encryption
+        user.setPassword(request.getPassword());
         user.setRoles(request.getRoles());
         user.setCreatedAt(LocalDateTime.now());
 
@@ -40,12 +38,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthResponse login(AuthLoginRequest request) {
+    public AuthResponse login(AuthRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // ✅ SIMPLE PASSWORD CHECK
         if (!user.getPassword().equals(request.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
