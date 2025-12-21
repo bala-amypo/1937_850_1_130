@@ -11,7 +11,7 @@ public class DeviceOwnershipRecord {
 
     private String serialNumber;
     private boolean active;
-    private String warrantyExpiration;
+    private String warrantyExpiration; // stored as String, will parse to LocalDate when needed
 
     // --- GETTERS & SETTERS ---
     public Long getId() { return id; }

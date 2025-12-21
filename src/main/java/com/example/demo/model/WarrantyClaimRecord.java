@@ -11,7 +11,7 @@ public class WarrantyClaimRecord {
 
     private String serialNumber;
     private String claimReason;
-    private String status;
+    private String status; // e.g., "FLAGGED", "APPROVED"
 
     // --- GETTERS & SETTERS ---
     public Long getId() { return id; }
