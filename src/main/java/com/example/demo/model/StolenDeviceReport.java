@@ -1,10 +1,8 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "stolen_device_reports")
 public class StolenDeviceReport {
 
     @Id
@@ -12,27 +10,12 @@ public class StolenDeviceReport {
     private Long id;
 
     private String serialNumber;
-    private String reportedBy;
-    private LocalDateTime reportDate;
-    private String details;
 
-    @PrePersist
-    public void onCreate() {
-        this.reportDate = LocalDateTime.now();
+    public Long getId() {
+        return id;
     }
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getSerialNumber() { return serialNumber; }
-    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
-
-    public String getReportedBy() { return reportedBy; }
-    public void setReportedBy(String reportedBy) { this.reportedBy = reportedBy; }
-
-    public LocalDateTime getReportDate() { return reportDate; }
-
-    public String getDetails() { return details; }
-    public void setDetails(String details) { this.details = details; }
+    public String getSerialNumber() {
+        return serialNumber;
+    }
 }
