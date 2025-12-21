@@ -1,33 +1,51 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "serialNumber"))
+@Table(
+    name = "device_ownership_records",
+    uniqueConstraints = @UniqueConstraint(columnNames = "serialNumber")
+)
 public class DeviceOwnershipRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false, unique = true)
     private String serialNumber;
 
-    @NotBlank
     private String ownerName;
-
-    @Email
     private String ownerEmail;
 
-    @NotNull
     private LocalDate purchaseDate;
-
-    @NotNull
     private LocalDate warrantyExpiration;
 
-    private Boolean active = true;
+    private Boolean active;
 
-    
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getSerialNumber() { return serialNumber; }
+    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+
+    public String getOwnerName() { return ownerName; }
+    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
+
+    public String getOwnerEmail() { return ownerEmail; }
+    public void setOwnerEmail(String ownerEmail) { this.ownerEmail = ownerEmail; }
+
+    public LocalDate getPurchaseDate() { return purchaseDate; }
+    public void setPurchaseDate(LocalDate purchaseDate) { this.purchaseDate = purchaseDate; }
+
+    public LocalDate getWarrantyExpiration() { return warrantyExpiration; }
+    public void setWarrantyExpiration(LocalDate warrantyExpiration) {
+        this.warrantyExpiration = warrantyExpiration;
+    }
+
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 }
