@@ -1,52 +1,29 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.User;
-import com.example.demo.service.UserService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.example.demo.dto.AuthLoginRequest;
+import com.example.demo.dto.AuthRegisterRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.service.AuthService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "Authentication")
 public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    // ✅ Constructor Injection
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
-    // ✅ REGISTER (CREATE)
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.createUser(user);
+    public AuthResponse register(@RequestBody AuthRegisterRequest request) {
+        return authService.register(request);
     }
 
-    // ✅ LOGIN (READ)
     @PostMapping("/login")
-    public User login(
-            @RequestParam String email,
-            @RequestParam String password) {
-
-        User user = userService.getUserByEmail(email);
-
-        if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid email or password");
-        }
-
-        return user;
-    }
-
-    // ✅ GET USER BY ID (READ)
-    @GetMapping("/user/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
-    }
-
-    // ✅ DELETE USER (DELETE)
-    @DeleteMapping("/user/{id}")
-    public String deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return "User deleted successfully";
+    public AuthResponse login(@RequestBody AuthLoginRequest request) {
+        return authService.login(request);
     }
 }
