@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 public class FraudAlertRecord {
@@ -10,24 +9,16 @@ public class FraudAlertRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long claimId;
     private String serialNumber;
-    private Boolean resolved = false;
-    private LocalDateTime alertDate = LocalDateTime.now();
+    private boolean resolved;
 
-    public Long getId() {
-        return id;
-    }
+    // --- GETTERS & SETTERS ---
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public String getSerialNumber() {
-        return serialNumber;
-    }
+    public String getSerialNumber() { return serialNumber; }
+    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
 
-    public Boolean getResolved() {
-        return resolved;
-    }
-
-    public void setResolved(Boolean resolved) {
-        this.resolved = resolved;
-    }
+    public boolean getResolved() { return resolved; }
+    public void setResolved(boolean resolved) { this.resolved = resolved; }
 }

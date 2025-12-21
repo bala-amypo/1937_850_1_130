@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 public class WarrantyClaimRecord {
@@ -14,27 +13,16 @@ public class WarrantyClaimRecord {
     private String claimReason;
     private String status;
 
-    private LocalDateTime submittedAt;
+    // --- GETTERS & SETTERS ---
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    @PrePersist
-    void onCreate() {
-        this.submittedAt = LocalDateTime.now();
-        this.status = "PENDING";
-    }
+    public String getSerialNumber() { return serialNumber; }
+    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getClaimReason() { return claimReason; }
+    public void setClaimReason(String claimReason) { this.claimReason = claimReason; }
 
-    public String getSerialNumber() {
-        return serialNumber;
-    }
-
-    public String getClaimReason() {
-        return claimReason;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }
