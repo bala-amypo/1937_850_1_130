@@ -19,7 +19,8 @@ public class DeviceOwnershipController {
     }
 
     @PostMapping
-    public DeviceOwnershipRecord register(@RequestBody DeviceOwnershipRecord device) {
+    public DeviceOwnershipRecord registerDevice(
+            @RequestBody DeviceOwnershipRecord device) {
         return service.registerDevice(device);
     }
 
@@ -31,21 +32,13 @@ public class DeviceOwnershipController {
     }
 
     @GetMapping("/serial/{serialNumber}")
-    public DeviceOwnershipRecord getBySerial(@PathVariable String serialNumber) {
+    public DeviceOwnershipRecord getBySerial(
+            @PathVariable String serialNumber) {
         return service.getBySerial(serialNumber);
     }
 
-    @GetMapping("/{id}")
-    public DeviceOwnershipRecord getById(@PathVariable Long id) {
-        return service.getAllDevices()
-                .stream()
-                .filter(d -> d.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new java.util.NoSuchElementException("Device not found"));
-    }
-
     @GetMapping
-    public List<DeviceOwnershipRecord> getAll() {
+    public List<DeviceOwnershipRecord> getAllDevices() {
         return service.getAllDevices();
     }
 }

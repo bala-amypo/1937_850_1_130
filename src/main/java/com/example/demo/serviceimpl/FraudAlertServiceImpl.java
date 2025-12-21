@@ -1,17 +1,16 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.model.FraudAlertRecord;
 import com.example.demo.repository.FraudAlertRecordRepository;
+import com.example.demo.service.FraudAlertService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 public class FraudAlertServiceImpl implements FraudAlertService {
 
     private final FraudAlertRecordRepository repository;
 
-    // REQUIRED constructor
     public FraudAlertServiceImpl(FraudAlertRecordRepository repository) {
         this.repository = repository;
     }
@@ -34,7 +33,7 @@ public class FraudAlertServiceImpl implements FraudAlertService {
         return repository.findAll()
                 .stream()
                 .filter(a -> a.getSerialNumber().equals(serialNumber))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

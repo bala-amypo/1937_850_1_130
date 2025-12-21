@@ -1,65 +1,50 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
-import com.example.demo.dto.*;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.service.UserService;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
-
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository repository;
 
-    // REQUIRED constructor order
-    public UserServiceImpl(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            JwtTokenProvider jwtTokenProvider) {
-
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
+    public UserServiceImpl(UserRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public AuthResponse registerUser(RegisterRequest req) {
-        if (userRepository.findByEmail(req.email).isPresent()) {
+    public User createUser(User user) {
+        if (repository.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
-
-        User user = new User();
-        user.setName(req.name);
-        user.setEmail(req.email);
-        user.setPassword(passwordEncoder.encode(req.password));
-        user.setRoles(req.roles);
-
-        userRepository.save(user);
-
-        AuthResponse res = new AuthResponse();
-        res.token = jwtTokenProvider.createToken(
-                user.getId(), user.getEmail(), user.getRoles());
-
-        return res;
+        return repository.save(user);
     }
 
     @Override
-    public AuthResponse loginUser(LoginRequest req) {
-        User user = userRepository.findByEmail(req.email)
+    public User getUserById(Long id) {
+        return repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
+    }
 
-        if (!passwordEncoder.matches(req.password, user.getPassword())) {
-            throw new IllegalArgumentException("Invalid credentials");
+    @Override
+    public User getUserByEmail(String email) {
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return repository.findAll();
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        if (!repository.existsById(id)) {
+            throw new NoSuchElementException("User not found");
         }
-
-        AuthResponse res = new AuthResponse();
-        res.token = jwtTokenProvider.createToken(
-                user.getId(), user.getEmail(), user.getRoles());
-
-        return res;
+        repository.deleteById(id);
     }
 }

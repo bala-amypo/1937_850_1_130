@@ -1,45 +1,47 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.model.StolenDeviceReport;
 import com.example.demo.repository.DeviceOwnershipRecordRepository;
 import com.example.demo.repository.StolenDeviceReportRepository;
+import com.example.demo.service.StolenDeviceService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class StolenDeviceServiceImpl implements StolenDeviceService {
 
-    private final StolenDeviceReportRepository stolenRepo;
-    private final DeviceOwnershipRecordRepository deviceRepo;
+    private final StolenDeviceReportRepository stolenRepository;
+    private final DeviceOwnershipRecordRepository deviceRepository;
 
-    // REQUIRED constructor
     public StolenDeviceServiceImpl(
-            StolenDeviceReportRepository stolenRepo,
-            DeviceOwnershipRecordRepository deviceRepo) {
-        this.stolenRepo = stolenRepo;
-        this.deviceRepo = deviceRepo;
+            StolenDeviceReportRepository stolenRepository,
+            DeviceOwnershipRecordRepository deviceRepository) {
+
+        this.stolenRepository = stolenRepository;
+        this.deviceRepository = deviceRepository;
     }
 
     @Override
     public StolenDeviceReport reportStolen(StolenDeviceReport report) {
-        deviceRepo.findBySerialNumber(report.getSerialNumber())
-                .orElseThrow(() -> new NoSuchElementException("Device not found"));
-        return stolenRepo.save(report);
+        if (!deviceRepository.existsBySerialNumber(report.getSerialNumber())) {
+            throw new NoSuchElementException("Device not found");
+        }
+        return stolenRepository.save(report);
     }
 
     @Override
     public List<StolenDeviceReport> getReportsBySerial(String serialNumber) {
-        return stolenRepo.findBySerialNumber(serialNumber);
+        return stolenRepository.findBySerialNumber(serialNumber);
     }
 
     @Override
     public StolenDeviceReport getReportById(Long id) {
-        return stolenRepo.findById(id)
+        return stolenRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Report not found"));
     }
 
     @Override
     public List<StolenDeviceReport> getAllReports() {
-        return stolenRepo.findAll();
+        return stolenRepository.findAll();
     }
 }
