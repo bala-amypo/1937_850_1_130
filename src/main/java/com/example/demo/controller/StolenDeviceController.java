@@ -19,13 +19,9 @@ public class StolenDeviceController {
     }
 
     @PostMapping
-    public StolenDeviceReport report(@RequestBody StolenDeviceReport report) {
+    public StolenDeviceReport reportStolen(
+            @RequestBody StolenDeviceReport report) {
         return service.reportStolen(report);
-    }
-
-    @GetMapping("/serial/{serialNumber}")
-    public List<StolenDeviceReport> getBySerial(@PathVariable String serialNumber) {
-        return service.getReportsBySerial(serialNumber);
     }
 
     @GetMapping("/{id}")
@@ -33,8 +29,14 @@ public class StolenDeviceController {
         return service.getReportById(id);
     }
 
+    @GetMapping("/serial/{serialNumber}")
+    public List<StolenDeviceReport> getBySerial(
+            @PathVariable String serialNumber) {
+        return service.getReportsBySerial(serialNumber);
+    }
+
     @GetMapping
-    public List<StolenDeviceReport> getAll() {
+    public List<StolenDeviceReport> getAllReports() {
         return service.getAllReports();
     }
 }

@@ -19,33 +19,30 @@ public class FraudRuleController {
     }
 
     @PostMapping
-    public FraudRule create(@RequestBody FraudRule rule) {
+    public FraudRule createRule(@RequestBody FraudRule rule) {
         return service.createRule(rule);
     }
 
     @PutMapping("/{id}")
-    public FraudRule update(
+    public FraudRule updateRule(
             @PathVariable Long id,
             @RequestBody FraudRule rule) {
         return service.updateRule(id, rule);
     }
 
     @GetMapping("/active")
-    public List<FraudRule> getActive() {
+    public List<FraudRule> getActiveRules() {
         return service.getActiveRules();
     }
 
-    @GetMapping("/{id}")
-    public FraudRule getById(@PathVariable Long id) {
-        return service.getAllRules()
-                .stream()
-                .filter(r -> r.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new java.util.NoSuchElementException("Rule not found"));
+    @GetMapping("/{ruleCode}")
+    public FraudRule getByRuleCode(
+            @PathVariable String ruleCode) {
+        return service.getRulebyccode(ruleCode);
     }
 
     @GetMapping
-    public List<FraudRule> getAll() {
+    public List<FraudRule> getAllRules() {
         return service.getAllRules();
     }
 }

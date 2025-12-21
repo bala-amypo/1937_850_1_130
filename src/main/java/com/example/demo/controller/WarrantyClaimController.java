@@ -19,7 +19,8 @@ public class WarrantyClaimController {
     }
 
     @PostMapping
-    public WarrantyClaimRecord submit(@RequestBody WarrantyClaimRecord claim) {
+    public WarrantyClaimRecord submitClaim(
+            @RequestBody WarrantyClaimRecord claim) {
         return service.submitClaim(claim);
     }
 
@@ -36,12 +37,13 @@ public class WarrantyClaimController {
     }
 
     @GetMapping("/serial/{serialNumber}")
-    public List<WarrantyClaimRecord> getBySerial(@PathVariable String serialNumber) {
+    public List<WarrantyClaimRecord> getBySerial(
+            @PathVariable String serialNumber) {
         return service.getClaimsBySerial(serialNumber);
     }
 
     @GetMapping
-    public List<WarrantyClaimRecord> getAll() {
+    public List<WarrantyClaimRecord> getAllClaims() {
         return service.getAllClaims();
     }
 }

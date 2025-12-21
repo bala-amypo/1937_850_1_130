@@ -19,36 +19,30 @@ public class FraudAlertController {
     }
 
     @PostMapping
-    public FraudAlertRecord create(@RequestBody FraudAlertRecord alert) {
+    public FraudAlertRecord createAlert(
+            @RequestBody FraudAlertRecord alert) {
         return service.createAlert(alert);
     }
 
     @PutMapping("/{id}/resolve")
-    public FraudAlertRecord resolve(@PathVariable long id) {
+    public FraudAlertRecord resolveAlert(@PathVariable Long id) {
         return service.resolveAlert(id);
     }
 
     @GetMapping("/serial/{serialNumber}")
-    public List<FraudAlertRecord> getBySerial(@PathVariable String serialNumber) {
+    public List<FraudAlertRecord> getBySerial(
+            @PathVariable String serialNumber) {
         return service.getAlertsBySerial(serialNumber);
     }
 
     @GetMapping("/claim/{claimId}")
-    public List<FraudAlertRecord> getByClaim(@PathVariable long claimId) {
+    public List<FraudAlertRecord> getByClaim(
+            @PathVariable Long claimId) {
         return service.getAlertsByClaim(claimId);
     }
 
-    @GetMapping("/{id}")
-    public FraudAlertRecord getById(@PathVariable long id) {
-        return service.getAllAlerts()
-                .stream()
-                .filter(a -> a.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new java.util.NoSuchElementException("Alert not found"));
-    }
-
     @GetMapping
-    public List<FraudAlertRecord> getAll() {
+    public List<FraudAlertRecord> getAllAlerts() {
         return service.getAllAlerts();
     }
 }
