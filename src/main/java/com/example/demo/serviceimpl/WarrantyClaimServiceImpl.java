@@ -1,7 +1,9 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
-import com.example.demo.model.*;
+import com.example.demo.model.DeviceOwnershipRecord;
+import com.example.demo.model.WarrantyClaimRecord;
 import com.example.demo.repository.*;
+import com.example.demo.service.WarrantyClaimService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,40 +11,39 @@ import java.util.NoSuchElementException;
 
 public class WarrantyClaimServiceImpl implements WarrantyClaimService {
 
-    private final WarrantyClaimRecordRepository claimRepo;
-    private final DeviceOwnershipRecordRepository deviceRepo;
-    private final StolenDeviceReportRepository stolenRepo;
-    private final FraudAlertRecordRepository alertRepo;
-    private final FraudRuleRepository ruleRepo;
+    private final WarrantyClaimRecordRepository claimRepository;
+    private final DeviceOwnershipRecordRepository deviceRepository;
+    private final StolenDeviceReportRepository stolenRepository;
+    private final FraudAlertRecordRepository alertRepository;
+    private final FraudRuleRepository ruleRepository;
 
-    // ⚠️ REQUIRED constructor order
     public WarrantyClaimServiceImpl(
-            WarrantyClaimRecordRepository claimRepo,
-            DeviceOwnershipRecordRepository deviceRepo,
-            StolenDeviceReportRepository stolenRepo,
-            FraudAlertRecordRepository alertRepo,
-            FraudRuleRepository ruleRepo) {
+            WarrantyClaimRecordRepository claimRepository,
+            DeviceOwnershipRecordRepository deviceRepository,
+            StolenDeviceReportRepository stolenRepository,
+            FraudAlertRecordRepository alertRepository,
+            FraudRuleRepository ruleRepository) {
 
-        this.claimRepo = claimRepo;
-        this.deviceRepo = deviceRepo;
-        this.stolenRepo = stolenRepo;
-        this.alertRepo = alertRepo;
-        this.ruleRepo = ruleRepo;
+        this.claimRepository = claimRepository;
+        this.deviceRepository = deviceRepository;
+        this.stolenRepository = stolenRepository;
+        this.alertRepository = alertRepository;
+        this.ruleRepository = ruleRepository;
     }
 
     @Override
     public WarrantyClaimRecord submitClaim(WarrantyClaimRecord claim) {
 
-        DeviceOwnershipRecord device = deviceRepo.findBySerialNumber(claim.getSerialNumber())
-                .orElseThrow(() -> new NoSuchElementException("Device not found"));
+        DeviceOwnershipRecord device =
+                deviceRepository.findBySerialNumber(claim.getSerialNumber());
 
-        if (!device.getActive()) {
-            throw new IllegalArgumentException("Inactive device");
+        if (device == null) {
+            throw new NoSuchElementException("Device not found");
         }
 
         boolean flagged = false;
 
-        if (stolenRepo.existsBySerialNumber(claim.getSerialNumber())) {
+        if (stolenRepository.existsBySerialNumber(claim.getSerialNumber())) {
             flagged = true;
         }
 
@@ -50,36 +51,35 @@ public class WarrantyClaimServiceImpl implements WarrantyClaimService {
             flagged = true;
         }
 
-        if (claimRepo.existsBySerialNumberAndClaimReason(
+        if (claimRepository.existsBySerialNumberAndClaimReason(
                 claim.getSerialNumber(), claim.getClaimReason())) {
             flagged = true;
         }
 
         claim.setStatus(flagged ? "FLAGGED" : "PENDING");
-        return claimRepo.save(claim);
+        return claimRepository.save(claim);
     }
 
     @Override
     public WarrantyClaimRecord updateClaimStatus(Long claimId, String status) {
-        WarrantyClaimRecord claim = claimRepo.findById(claimId)
-                .orElseThrow(() -> new NoSuchElementException("Claim not found"));
+        WarrantyClaimRecord claim = getClaimById(claimId);
         claim.setStatus(status);
-        return claimRepo.save(claim);
+        return claimRepository.save(claim);
     }
 
     @Override
     public WarrantyClaimRecord getClaimById(Long id) {
-        return claimRepo.findById(id)
+        return claimRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Claim not found"));
     }
 
     @Override
     public List<WarrantyClaimRecord> getClaimsBySerial(String serialNumber) {
-        return claimRepo.findBySerialNumber(serialNumber);
+        return claimRepository.findBySerialNumber(serialNumber);
     }
 
     @Override
     public List<WarrantyClaimRecord> getAllClaims() {
-        return claimRepo.findAll();
+        return claimRepository.findAll();
     }
 }

@@ -1,7 +1,8 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.model.DeviceOwnershipRecord;
 import com.example.demo.repository.DeviceOwnershipRecordRepository;
+import com.example.demo.service.DeviceOwnershipService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -10,7 +11,6 @@ public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
 
     private final DeviceOwnershipRecordRepository repository;
 
-    // REQUIRED constructor
     public DeviceOwnershipServiceImpl(DeviceOwnershipRecordRepository repository) {
         this.repository = repository;
     }
@@ -25,8 +25,11 @@ public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
 
     @Override
     public DeviceOwnershipRecord getBySerial(String serialNumber) {
-        return repository.findBySerialNumber(serialNumber)
-                .orElseThrow(() -> new NoSuchElementException("Device not found"));
+        DeviceOwnershipRecord device = repository.findBySerialNumber(serialNumber);
+        if (device == null) {
+            throw new NoSuchElementException("Device not found");
+        }
+        return device;
     }
 
     @Override
