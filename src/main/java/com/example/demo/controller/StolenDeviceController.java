@@ -1,42 +1,19 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.StolenDeviceReport;
 import com.example.demo.service.StolenDeviceService;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/stolen-devices")
-@Tag(name = "Stolen Devices")
 public class StolenDeviceController {
 
-    private final StolenDeviceService service;
+    private final StolenDeviceService stolenDeviceService;
 
-    public StolenDeviceController(StolenDeviceService service) {
-        this.service = service;
+    public StolenDeviceController(StolenDeviceService stolenDeviceService) {
+        this.stolenDeviceService = stolenDeviceService;
     }
 
-    @PostMapping
-    public StolenDeviceReport reportStolen(
-            @RequestBody StolenDeviceReport report) {
-        return service.reportStolen(report);
-    }
-
-    @GetMapping("/{id}")
-    public StolenDeviceReport getById(@PathVariable Long id) {
-        return service.getReportById(id);
-    }
-
-    @GetMapping("/serial/{serialNumber}")
-    public List<StolenDeviceReport> getBySerial(
-            @PathVariable String serialNumber) {
-        return service.getReportsBySerial(serialNumber);
-    }
-
-    @GetMapping
-    public List<StolenDeviceReport> getAllReports() {
-        return service.getAllReports();
+    // Example endpoint
+    public void report(String serial) {
+        stolenDeviceService.reportStolenDevice(serial);
     }
 }
