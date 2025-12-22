@@ -5,13 +5,13 @@ import java.util.List;
 
 public interface WarrantyClaimService {
 
-    WarrantyClaimRecord submitClaim(WarrantyClaimRecord claim);
-
-    WarrantyClaimRecord updateClaimStatus(Long id, String status);
-
     WarrantyClaimRecord getClaimById(Long id);
+
+    List<WarrantyClaimRecord> getAllClaims();
 
     List<WarrantyClaimRecord> getClaimsBySerial(String serialNumber);
 
-    List<WarrantyClaimRecord> getAllClaims();
+    WarrantyClaimRecord updateClaimStatus(Long id, String status);
+
+    WarrantyClaimRecord saveClaim(WarrantyClaimRecord record);
 }
