@@ -21,14 +21,14 @@ public class DeviceOwnershipController {
     }
 
     @PutMapping("/{id}/status")
-    public void updateDeviceStatus(@PathVariable Long id, @RequestParam boolean stolen) {
-        service.updateDeviceStatus(id, stolen);
+    public DeviceOwnershipRecord updateDeviceStatus(@PathVariable Long id, @RequestParam boolean stolen) {
+        return service.updateDeviceStatus(id, stolen);
     }
 
     @GetMapping("/serial/{serialNumber}")
     public DeviceOwnershipRecord getDeviceBySerial(@PathVariable String serialNumber) {
         Optional<DeviceOwnershipRecord> optionalRecord = service.getBySerial(serialNumber);
-        return optionalRecord.orElse(null); // or throw an exception if preferred
+        return optionalRecord.orElse(null);
     }
 
     @GetMapping("/all")

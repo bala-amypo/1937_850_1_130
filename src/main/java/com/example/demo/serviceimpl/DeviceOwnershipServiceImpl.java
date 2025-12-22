@@ -21,13 +21,14 @@ public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
     }
 
     @Override
-    public void updateDeviceStatus(Long id, boolean stolen) {
+    public DeviceOwnershipRecord updateDeviceStatus(Long id, boolean stolen) {
         Optional<DeviceOwnershipRecord> optionalRecord = repository.findById(id);
-        if(optionalRecord.isPresent()) {
+        if (optionalRecord.isPresent()) {
             DeviceOwnershipRecord record = optionalRecord.get();
             record.setStolen(stolen);
-            repository.save(record);
+            return repository.save(record);
         }
+        return null; // Or throw exception if not found
     }
 
     @Override

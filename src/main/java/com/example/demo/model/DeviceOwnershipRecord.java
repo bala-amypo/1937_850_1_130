@@ -10,12 +10,18 @@ public class DeviceOwnershipRecord {
     private Long id;
 
     private String serialNumber;
-    private boolean active;
-    private String warrantyExpiration;  // yyyy-MM-dd
-    private String status;  // NEW: for warranty status or other use
 
-    // --- GETTERS & SETTERS ---
+    private boolean stolen;
 
+    // Constructors
+    public DeviceOwnershipRecord() {}
+
+    public DeviceOwnershipRecord(String serialNumber, boolean stolen) {
+        this.serialNumber = serialNumber;
+        this.stolen = stolen;
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -32,27 +38,11 @@ public class DeviceOwnershipRecord {
         this.serialNumber = serialNumber;
     }
 
-    public boolean getActive() {
-        return active;
+    public boolean isStolen() {
+        return stolen;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public String getWarrantyExpiration() {
-        return warrantyExpiration;
-    }
-
-    public void setWarrantyExpiration(String warrantyExpiration) {
-        this.warrantyExpiration = warrantyExpiration;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStolen(boolean stolen) {
+        this.stolen = stolen;
     }
 }
