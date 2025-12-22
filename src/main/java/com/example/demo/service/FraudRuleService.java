@@ -1,5 +1,5 @@
 package com.example.demo.service;
 
 public interface FraudRuleService {
-    void evaluateRule(String claimId);
+    boolean evaluateRule(String ruleName, String value);
 }

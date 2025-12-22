@@ -1,10 +1,6 @@
 package com.example.demo.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.time.LocalDate;
+import jakarta.persistence.*;
 
 @Entity
 public class DeviceOwnershipRecord {
@@ -13,22 +9,11 @@ public class DeviceOwnershipRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, unique = true)
     private String serialNumber;
+
     private boolean stolen;
-    private LocalDate warrantyExpiration;
-    private String status;
 
-    // Constructors
-    public DeviceOwnershipRecord() {}
-
-    public DeviceOwnershipRecord(String serialNumber, boolean stolen, LocalDate warrantyExpiration, String status) {
-        this.serialNumber = serialNumber;
-        this.stolen = stolen;
-        this.warrantyExpiration = warrantyExpiration;
-        this.status = status;
-    }
-
-    // Getters & Setters
     public Long getId() {
         return id;
     }
@@ -37,31 +22,19 @@ public class DeviceOwnershipRecord {
         return serialNumber;
     }
 
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
     public boolean isStolen() {
         return stolen;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
     public void setStolen(boolean stolen) {
         this.stolen = stolen;
-    }
-
-    public LocalDate getWarrantyExpiration() {
-        return warrantyExpiration;
-    }
-
-    public void setWarrantyExpiration(LocalDate warrantyExpiration) {
-        this.warrantyExpiration = warrantyExpiration;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }
