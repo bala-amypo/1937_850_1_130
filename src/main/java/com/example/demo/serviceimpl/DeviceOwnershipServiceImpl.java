@@ -3,8 +3,9 @@ package com.example.demo.serviceimpl;
 import com.example.demo.model.DeviceOwnershipRecord;
 import com.example.demo.repository.DeviceOwnershipRecordRepository;
 import com.example.demo.service.DeviceOwnershipService;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
@@ -15,8 +16,13 @@ public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
     @Override
     public DeviceOwnershipRecord updateDeviceStatus(Long id, boolean stolen) {
         DeviceOwnershipRecord record = deviceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Device not found"));
+                .orElseThrow(() -> new RuntimeException("Device not found with id: " + id));
         record.setStolen(stolen);
         return deviceRepository.save(record);
+    }
+
+    @Override
+    public List<DeviceOwnershipRecord> getAllDevices() {
+        return deviceRepository.findAll();
     }
 }

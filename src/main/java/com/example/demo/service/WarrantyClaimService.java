@@ -1,17 +1,30 @@
-package com.example.demo.service;
+package com.example.demo.serviceimpl;
 
-import com.example.demo.model.WarrantyClaimRecord;
-import java.util.List;
+import com.example.demo.model.DeviceOwnershipRecord;
+import com.example.demo.repository.DeviceOwnershipRecordRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public interface WarrantyClaimService {
+import java.time.LocalDate;
 
-    WarrantyClaimRecord submitClaim(WarrantyClaimRecord claim);
+@Service
+public class WarrantyClaimServiceImpl {
 
-    WarrantyClaimRecord updateClaimStatus(Long id, String status);
+    @Autowired
+    private DeviceOwnershipRecordRepository deviceRepository;
 
-    WarrantyClaimRecord getClaimById(Long id);
+    public String checkWarranty(Long deviceId) {
+        DeviceOwnershipRecord device = deviceRepository.findById(deviceId)
+                .orElseThrow(() -> new RuntimeException("Device not found"));
 
-    List<WarrantyClaimRecord> getClaimsBySerial(String serialNumber);
-
-    List<WarrantyClaimRecord> getAllClaims();
+        if (device.getWarrantyExpiration().isBefore(LocalDate.now())) {
+            device.setStatus("Expired");
+            deviceRepository.save(device);
+            return "Warranty expired";
+        } else {
+            device.setStatus("Valid");
+            deviceRepository.save(device);
+            return "Warranty valid";
+        }
+    }
 }
