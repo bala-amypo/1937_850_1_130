@@ -1,31 +1,77 @@
-package com.example.demo.service;
+package com.example.demo.model;
 
-import com.example.demo.model.DeviceOwnershipRecord;
-import com.example.demo.repository.DeviceOwnershipRecordRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import jakarta.persistence.*;
+import java.time.LocalDate;
 
-import java.util.Optional;
+@Entity
+@Table(name = "device_ownership")
+public class DeviceOwnershipRecord {
 
-@Service
-public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private final DeviceOwnershipRecordRepository deviceRepository;
+    @Column(unique = true, nullable = false)
+    private String serialNumber;
 
-    @Autowired
-    public DeviceOwnershipServiceImpl(DeviceOwnershipRecordRepository deviceRepository) {
-        this.deviceRepository = deviceRepository;
+    @Column(nullable = false)
+    private boolean stolen;
+
+    @Column(nullable = false)
+    private LocalDate warrantyExpiration;
+
+    @Column(nullable = false)
+    private String status;
+
+    // Constructors
+    public DeviceOwnershipRecord() {
     }
 
-    @Override
-    public DeviceOwnershipRecord updateDeviceStatus(Long id, boolean stolen) {
-        Optional<DeviceOwnershipRecord> optionalRecord = deviceRepository.findById(id);
-        if (optionalRecord.isPresent()) {
-            DeviceOwnershipRecord record = optionalRecord.get();
-            record.setStolen(stolen); // Make sure your DeviceOwnershipRecord model has setStolen()
-            return deviceRepository.save(record);
-        } else {
-            throw new RuntimeException("Device not found with id: " + id);
-        }
+    public DeviceOwnershipRecord(String serialNumber, boolean stolen, LocalDate warrantyExpiration, String status) {
+        this.serialNumber = serialNumber;
+        this.stolen = stolen;
+        this.warrantyExpiration = warrantyExpiration;
+        this.status = status;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    public boolean isStolen() {
+        return stolen;
+    }
+
+    public void setStolen(boolean stolen) {
+        this.stolen = stolen;
+    }
+
+    public LocalDate getWarrantyExpiration() {
+        return warrantyExpiration;
+    }
+
+    public void setWarrantyExpiration(LocalDate warrantyExpiration) {
+        this.warrantyExpiration = warrantyExpiration;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
