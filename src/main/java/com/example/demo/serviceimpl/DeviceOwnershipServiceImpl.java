@@ -18,28 +18,26 @@ public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
     }
 
     @Override
-    public DeviceOwnershipRecord create(DeviceOwnershipRecord record) {
+    public DeviceOwnershipRecord registerDevice(DeviceOwnershipRecord record) {
         return repository.save(record);
     }
 
     @Override
-    public DeviceOwnershipRecord update(Long id, DeviceOwnershipRecord record) {
-        record.setId(id);
+    public DeviceOwnershipRecord updateDeviceStatus(Long id, boolean active) {
+        DeviceOwnershipRecord record = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Device not found"));
+
+        record.setActive(active);
         return repository.save(record);
     }
 
     @Override
-    public Optional<DeviceOwnershipRecord> getById(Long id) {
-        return repository.findById(id);
+    public Optional<DeviceOwnershipRecord> getBySerial(String serialNumber) {
+        return repository.findBySerialNumber(serialNumber);
     }
 
     @Override
-    public List<DeviceOwnershipRecord> getAll() {
+    public List<DeviceOwnershipRecord> getAllDevices() {
         return repository.findAll();
-    }
-
-    @Override
-    public void delete(Long id) {
-        repository.deleteById(id);
     }
 }
