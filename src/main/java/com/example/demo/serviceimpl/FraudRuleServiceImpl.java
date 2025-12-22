@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 public class FraudRuleServiceImpl implements FraudRuleService {
 
     @Override
-    public boolean evaluateRule(String input) {
-        // simple rule logic
-        return input != null && !input.isBlank();
+    public boolean evaluateRule(String ruleName, String input) {
+        // simple dummy logic
+        if (ruleName == null || input == null) {
+            return false;
+        }
+        return !input.isBlank();
     }
 }

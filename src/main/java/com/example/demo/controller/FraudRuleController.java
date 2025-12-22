@@ -1,9 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.service.FraudRuleService;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/fraud-rule")
 public class FraudRuleController {
 
     private final FraudRuleService fraudRuleService;
@@ -12,9 +13,11 @@ public class FraudRuleController {
         this.fraudRuleService = fraudRuleService;
     }
 
-    // Example endpoint
-    // @GetMapping("/evaluate/{claimId}")
-    public void evaluate(String claimId) {
-        fraudRuleService.evaluateRule(claimId);
+    @GetMapping("/evaluate")
+    public boolean evaluateRule(
+            @RequestParam String ruleName,
+            @RequestParam String input) {
+
+        return fraudRuleService.evaluateRule(ruleName, input);
     }
 }
