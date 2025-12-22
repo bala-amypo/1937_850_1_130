@@ -1,48 +1,14 @@
-package com.example.demo.service.impl;
+package com.example.demo.serviceimpl;
 
-import com.example.demo.model.FraudAlertRecord;
-import com.example.demo.repository.FraudAlertRecordRepository;
 import com.example.demo.service.FraudAlertService;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-
+@Service
 public class FraudAlertServiceImpl implements FraudAlertService {
 
-    private final FraudAlertRecordRepository repository;
-
-    public FraudAlertServiceImpl(FraudAlertRecordRepository repository) {
-        this.repository = repository;
-    }
-
     @Override
-    public FraudAlertRecord createAlert(FraudAlertRecord alert) {
-        return repository.save(alert);
-    }
-
-    @Override
-    public FraudAlertRecord resolveAlert(long id) {
-        FraudAlertRecord alert = repository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Alert not found"));
-        alert.setResolved(true);
-        return repository.save(alert);
-    }
-
-    @Override
-    public List<FraudAlertRecord> getAlertsBySerial(String serialNumber) {
-        return repository.findAll()
-                .stream()
-                .filter(a -> a.getSerialNumber().equals(serialNumber))
-                .toList();
-    }
-
-    @Override
-    public List<FraudAlertRecord> getAlertsByClaim(long claimId) {
-        return repository.findByClaimId(claimId);
-    }
-
-    @Override
-    public List<FraudAlertRecord> getAllAlerts() {
-        return repository.findAll();
+    public void sendAlert(String message) {
+        // For now, just print the alert. You can extend this to send emails or notifications.
+        System.out.println("FRAUD ALERT: " + message);
     }
 }
