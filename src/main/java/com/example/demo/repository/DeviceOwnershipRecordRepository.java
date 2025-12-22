@@ -8,3 +8,4 @@ public interface DeviceOwnershipRecordRepository
 
     boolean existsBySerialNumber(String serialNumber);
 }
+   
