@@ -3,6 +3,7 @@ package com.example.demo.serviceimpl;
 import com.example.demo.model.DeviceOwnershipRecord;
 import com.example.demo.repository.DeviceOwnershipRecordRepository;
 import com.example.demo.service.DeviceOwnershipService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,11 +12,8 @@ import java.util.Optional;
 @Service
 public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
 
-    private final DeviceOwnershipRecordRepository repository;
-
-    public DeviceOwnershipServiceImpl(DeviceOwnershipRecordRepository repository) {
-        this.repository = repository;
-    }
+    @Autowired
+    private DeviceOwnershipRecordRepository repository;
 
     @Override
     public DeviceOwnershipRecord registerDevice(DeviceOwnershipRecord record) {
@@ -23,12 +21,13 @@ public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
     }
 
     @Override
-    public DeviceOwnershipRecord updateDeviceStatus(Long id, boolean active) {
-        DeviceOwnershipRecord record = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Device not found"));
-
-        record.setActive(active);
-        return repository.save(record);
+    public void updateDeviceStatus(Long id, boolean stolen) {
+        Optional<DeviceOwnershipRecord> optionalRecord = repository.findById(id);
+        if(optionalRecord.isPresent()) {
+            DeviceOwnershipRecord record = optionalRecord.get();
+            record.setStolen(stolen);
+            repository.save(record);
+        }
     }
 
     @Override

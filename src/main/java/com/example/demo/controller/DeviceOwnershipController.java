@@ -2,42 +2,36 @@ package com.example.demo.controller;
 
 import com.example.demo.model.DeviceOwnershipRecord;
 import com.example.demo.service.DeviceOwnershipService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/devices")
-@Tag(name = "Device Ownership")
+@RequestMapping("/devices")
 public class DeviceOwnershipController {
 
-    private final DeviceOwnershipService service;
+    @Autowired
+    private DeviceOwnershipService service;
 
-    public DeviceOwnershipController(DeviceOwnershipService service) {
-        this.service = service;
-    }
-
-    @PostMapping
-    public DeviceOwnershipRecord registerDevice(
-            @RequestBody DeviceOwnershipRecord device) {
-        return service.registerDevice(device);
+    @PostMapping("/register")
+    public DeviceOwnershipRecord registerDevice(@RequestBody DeviceOwnershipRecord record) {
+        return service.registerDevice(record);
     }
 
     @PutMapping("/{id}/status")
-    public DeviceOwnershipRecord updateStatus(
-            @PathVariable Long id,
-            @RequestParam boolean active) {
-        return service.updateDeviceStatus(id, active);
+    public void updateDeviceStatus(@PathVariable Long id, @RequestParam boolean stolen) {
+        service.updateDeviceStatus(id, stolen);
     }
 
     @GetMapping("/serial/{serialNumber}")
-    public DeviceOwnershipRecord getBySerial(
-            @PathVariable String serialNumber) {
-        return service.getBySerial(serialNumber);
+    public DeviceOwnershipRecord getDeviceBySerial(@PathVariable String serialNumber) {
+        Optional<DeviceOwnershipRecord> optionalRecord = service.getBySerial(serialNumber);
+        return optionalRecord.orElse(null); // or throw an exception if preferred
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<DeviceOwnershipRecord> getAllDevices() {
         return service.getAllDevices();
     }
