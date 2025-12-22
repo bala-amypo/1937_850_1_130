@@ -1,48 +1,20 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.FraudRule;
 import com.example.demo.service.FraudRuleService;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/fraud-rules")
-@Tag(name = "Fraud Rules")
 public class FraudRuleController {
 
-    private final FraudRuleService service;
+    private final FraudRuleService fraudRuleService;
 
-    public FraudRuleController(FraudRuleService service) {
-        this.service = service;
+    public FraudRuleController(FraudRuleService fraudRuleService) {
+        this.fraudRuleService = fraudRuleService;
     }
 
-    @PostMapping
-    public FraudRule createRule(@RequestBody FraudRule rule) {
-        return service.createRule(rule);
-    }
-
-    @PutMapping("/{id}")
-    public FraudRule updateRule(
-            @PathVariable Long id,
-            @RequestBody FraudRule rule) {
-        return service.updateRule(id, rule);
-    }
-
-    @GetMapping("/active")
-    public List<FraudRule> getActiveRules() {
-        return service.getActiveRules();
-    }
-
-    @GetMapping("/{ruleCode}")
-    public FraudRule getByRuleCode(
-            @PathVariable String ruleCode) {
-        return service.getRulebyccode(ruleCode);
-    }
-
-    @GetMapping
-    public List<FraudRule> getAllRules() {
-        return service.getAllRules();
+    // Example endpoint
+    // @GetMapping("/evaluate/{claimId}")
+    public void evaluate(String claimId) {
+        fraudRuleService.evaluateRule(claimId);
     }
 }
