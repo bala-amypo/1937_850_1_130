@@ -1,5 +1,5 @@
 package com.example.demo.service;
 
 public interface StolenDeviceService {
-    boolean isDeviceStolen(String serialNumber);
+    void reportStolenDevice(String serialNumber);
 }
