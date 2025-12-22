@@ -1,36 +1,31 @@
-package com.example.demo.model;
+package com.example.demo.service;
 
-import jakarta.persistence.*;
-import java.time.LocalDate;
+import com.example.demo.model.DeviceOwnershipRecord;
+import com.example.demo.repository.DeviceOwnershipRecordRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@Entity
-public class DeviceOwnershipRecord {
+import java.util.Optional;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Service
+public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
 
-    private String serialNumber;
+    private final DeviceOwnershipRecordRepository deviceRepository;
 
-    private boolean stolen;
+    @Autowired
+    public DeviceOwnershipServiceImpl(DeviceOwnershipRecordRepository deviceRepository) {
+        this.deviceRepository = deviceRepository;
+    }
 
-    private LocalDate warrantyExpiration;
-
-    private String status;
-
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getSerialNumber() { return serialNumber; }
-    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
-
-    public boolean isStolen() { return stolen; }
-    public void setStolen(boolean stolen) { this.stolen = stolen; }
-
-    public LocalDate getWarrantyExpiration() { return warrantyExpiration; }
-    public void setWarrantyExpiration(LocalDate warrantyExpiration) { this.warrantyExpiration = warrantyExpiration; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    @Override
+    public DeviceOwnershipRecord updateDeviceStatus(Long id, boolean stolen) {
+        Optional<DeviceOwnershipRecord> optionalRecord = deviceRepository.findById(id);
+        if (optionalRecord.isPresent()) {
+            DeviceOwnershipRecord record = optionalRecord.get();
+            record.setStolen(stolen); // Make sure your DeviceOwnershipRecord model has setStolen()
+            return deviceRepository.save(record);
+        } else {
+            throw new RuntimeException("Device not found with id: " + id);
+        }
+    }
 }
