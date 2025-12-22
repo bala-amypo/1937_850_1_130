@@ -1,17 +1,14 @@
 package com.example.demo.service;
 
-import com.example.demo.model.FraudAlertRecord;
-import java.util.List;
-
+/**
+ * Interface for sending fraud alerts.
+ */
 public interface FraudAlertService {
 
-    FraudAlertRecord createAlert(FraudAlertRecord alert);
-
-    FraudAlertRecord resolveAlert(long id);
-
-    List<FraudAlertRecord> getAlertsBySerial(String serialNumber);
-
-    List<FraudAlertRecord> getAlertsByClaim(long claimId);
-
-    List<FraudAlertRecord> getAllAlerts();
+    /**
+     * Sends a fraud alert with the given message.
+     *
+     * @param message The message describing the fraud alert.
+     */
+    void sendAlert(String message);
 }
