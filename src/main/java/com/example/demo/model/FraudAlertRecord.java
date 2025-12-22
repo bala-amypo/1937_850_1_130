@@ -1,24 +1,47 @@
-package com.example.demo.model;
+package com.example.demo.entity;
 
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "fraud_alert_records")
 public class FraudAlertRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String serialNumber;
-    private boolean resolved;
+    // 🔥 REQUIRED FIELD (this fixes your crash)
+    @Column(nullable = false)
+    private Long claimId;
 
-    // --- GETTERS & SETTERS ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @Column(nullable = false)
+    private String message;
 
-    public String getSerialNumber() { return serialNumber; }
-    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+    public FraudAlertRecord() {
+    }
 
-    public boolean getResolved() { return resolved; }
-    public void setResolved(boolean resolved) { this.resolved = resolved; }
+    public FraudAlertRecord(Long claimId, String message) {
+        this.claimId = claimId;
+        this.message = message;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getClaimId() {
+        return claimId;
+    }
+
+    public void setClaimId(Long claimId) {
+        this.claimId = claimId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
