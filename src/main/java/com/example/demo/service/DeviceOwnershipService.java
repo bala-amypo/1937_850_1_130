@@ -9,7 +9,7 @@ public interface DeviceOwnershipService {
 
     DeviceOwnershipRecord registerDevice(DeviceOwnershipRecord record);
 
-    void updateDeviceStatus(Long id, boolean stolen);
+    DeviceOwnershipRecord updateDeviceStatus(Long id, boolean active);
 
     Optional<DeviceOwnershipRecord> getBySerial(String serialNumber);
 
