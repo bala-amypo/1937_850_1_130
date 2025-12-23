@@ -2,25 +2,44 @@ package com.example.demo.controller;
 
 import com.example.demo.model.DeviceOwnershipRecord;
 import com.example.demo.service.DeviceOwnershipService;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/devices")
+@RequestMapping("/api/devices")
+@Tag(name = "Device Ownership")
 public class DeviceOwnershipController {
 
-    @Autowired
-    private DeviceOwnershipService deviceService;
+    private final DeviceOwnershipService deviceService;
 
-    @GetMapping
-    public List<DeviceOwnershipRecord> getAllDevices() {
-        return deviceService.getAllDevices();
+    public DeviceOwnershipController(DeviceOwnershipService deviceService) {
+        this.deviceService = deviceService;
+    }
+
+    @PostMapping
+    public DeviceOwnershipRecord registerDevice(@RequestBody DeviceOwnershipRecord device) {
+        return deviceService.registerDevice(device);
     }
 
     @PutMapping("/{id}/status")
-    public DeviceOwnershipRecord updateDeviceStatus(@PathVariable Long id, @RequestParam boolean stolen) {
-        return deviceService.updateDeviceStatus(id, stolen);
+    public void updateStatus(@PathVariable Long id, @RequestParam boolean active) {
+        deviceService.updateDeviceStatus(id, active);
+    }
+
+    @GetMapping("/serial/{serialNumber}")
+    public DeviceOwnershipRecord getBySerial(@PathVariable String serialNumber) {
+        return deviceService.getBySerial(serialNumber);
+    }
+
+    @GetMapping("/{id}")
+    public DeviceOwnershipRecord getById(@PathVariable Long id) {
+        return deviceService.getById(id);
+    }
+
+    @GetMapping
+    public List<DeviceOwnershipRecord> getAll() {
+        return deviceService.getAllDevices();
     }
 }
