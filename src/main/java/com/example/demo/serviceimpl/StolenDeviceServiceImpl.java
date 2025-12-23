@@ -1,13 +1,52 @@
 package com.example.demo.serviceimpl;
 
+import com.example.demo.model.StolenDeviceReport;
+import com.example.demo.repository.DeviceOwnershipRecordRepository;
+import com.example.demo.repository.StolenDeviceReportRepository;
 import com.example.demo.service.StolenDeviceService;
+
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class StolenDeviceServiceImpl implements StolenDeviceService {
 
+    private final StolenDeviceReportRepository stolenRepo;
+    private final DeviceOwnershipRecordRepository deviceRepo;
+
+    public StolenDeviceServiceImpl(
+            StolenDeviceReportRepository stolenRepo,
+            DeviceOwnershipRecordRepository deviceRepo
+    ) {
+        this.stolenRepo = stolenRepo;
+        this.deviceRepo = deviceRepo;
+    }
+
     @Override
-    public void reportStolenDevice(String serialNumber) {
-        System.out.println("Device reported stolen: " + serialNumber);
+    public StolenDeviceReport reportStolen(StolenDeviceReport report) {
+
+        if (!deviceRepo.existsBySerialNumber(report.getSerialNumber())) {
+            throw new NoSuchElementException("Device not found");
+        }
+
+        return stolenRepo.save(report);
+    }
+
+    @Override
+    public List<StolenDeviceReport> getReportsBySerial(String serialNumber) {
+        return stolenRepo.findBySerialNumber(serialNumber);
+    }
+
+    @Override
+    public StolenDeviceReport getReportById(Long id) {
+        return stolenRepo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Report not found"));
+    }
+
+    @Override
+    public List<StolenDeviceReport> getAllReports() {
+        return stolenRepo.findAll();
     }
 }
