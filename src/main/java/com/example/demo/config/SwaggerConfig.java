@@ -13,7 +13,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI swaggerOpenAPI() {
         return new OpenAPI()
-                // change URL based on your server / deployment
+                // Set your custom server URL here
                 .servers(List.of(
                         new Server().url("https://9238.408procr.amypo.ai/")
                 ));
