@@ -1,30 +1,22 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthResponse;
-import com.example.demo.dto.LoginRequest;
-import com.example.demo.dto.RegisterRequest;
-import com.example.demo.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "Authentication")
+@Tag(name = "Auth Controller", description = "Authentication APIs")
 public class AuthController {
 
-    private final UserService userService;
-
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    @PostMapping("/login")
+    public String login(@RequestParam String username, @RequestParam String password) {
+        // Dummy login logic
+        return "JWT-Token-Here";
     }
 
     @PostMapping("/register")
-    public void register(@RequestBody RegisterRequest request) {
-        userService.registerUser(request);
-    }
-
-    @PostMapping("/login")
-    public AuthResponse login(@RequestBody LoginRequest request) {
-        return userService.loginUser(request);
+    public String register(@RequestParam String username, @RequestParam String password) {
+        // Dummy register logic
+        return "User registered successfully";
     }
 }
