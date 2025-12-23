@@ -1,19 +1,20 @@
 package com.example.demo.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import jakarta.persistence.*;
-import lombok.Data;
 
-@Data
 @Entity
-@Table(name = "fraud_rules")
+@Getter
+@Setter
 public class FraudRule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String ruleCode;
-    private String description;
-    private String ruleType;
-    private boolean active;
+    private String ruleName;
+    private boolean active; // <-- ensure this exists
+
+    // other fields...
 }
