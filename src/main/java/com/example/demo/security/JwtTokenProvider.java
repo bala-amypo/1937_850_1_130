@@ -1,32 +1,29 @@
 package com.example.demo.security;
 
+import org.springframework.stereotype.Component;
 import java.util.List;
+import java.util.Set;
 
+@Component
 public class JwtTokenProvider {
 
-    // Dummy methods; implement actual JWT logic as per your project
     public boolean validateToken(String token) {
-        // Validate the JWT token
+        // implement token validation logic
         return true;
     }
 
     public String getEmail(String token) {
-        // Extract email from JWT token
+        // extract email from token
         return "user@example.com";
     }
 
-    public List<String> getRoles(String token) {
-        // Extract roles from JWT token
-        return List.of("USER");
-    }
-
-    public String createToken(String email) {
-        // Create a JWT token using email
-        return "jwt-token";
+    public Set<String> getRoles(String token) {
+        // extract roles from token as Set
+        return Set.of("USER");
     }
 
     public String createToken(Long userId, String email, List<String> roles) {
-        // Overloaded method with multiple parameters
-        return "jwt-token";
+        // implement token creation logic using userId, email, roles
+        return "dummy-jwt-token";
     }
 }

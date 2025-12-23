@@ -1,52 +1,34 @@
-package com.example.demo.service.impl;
+package com.example.demo.serviceimpl;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.service.AuthService;
+import com.example.demo.security.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Service
-public class AuthServiceImpl implements AuthService {
+public class AuthServiceImpl {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public AuthServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
-    @Override
-    public AuthResponse register(AuthRequest request) {
+    public String registerUser(User user, Set<String> rolesSet) {
+        // Fix Set -> List conversion
+        List<String> rolesList = new ArrayList<>(rolesSet);
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
-        }
-
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        user.setRoles(request.getRoles());
+        user.setRoles(rolesList);
         user.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(user);
 
-        return new AuthResponse("User registered successfully");
-    }
-
-    @Override
-    public AuthResponse login(AuthRequest request) {
-
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!user.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
-        return new AuthResponse("Login successful");
+        return jwtTokenProvider.createToken(user.getId(), user.getEmail(), rolesList);
     }
 }

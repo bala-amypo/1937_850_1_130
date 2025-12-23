@@ -1,13 +1,19 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class FraudRule {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String ruleCode;
     private String ruleType;
-    private boolean active;
     private String description;
+    private boolean active;
 
-    // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -17,9 +23,9 @@ public class FraudRule {
     public String getRuleType() { return ruleType; }
     public void setRuleType(String ruleType) { this.ruleType = ruleType; }
 
-    public boolean getActive() { return active; }
-    public void setActive(boolean active) { this.active = active; }
-
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public boolean getActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
 }
