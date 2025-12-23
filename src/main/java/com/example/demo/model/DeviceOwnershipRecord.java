@@ -1,8 +1,13 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
+@Table(
+        name = "device_ownership_record",
+        uniqueConstraints = @UniqueConstraint(columnNames = "serialNumber")
+)
 public class DeviceOwnershipRecord {
 
     @Id
@@ -12,29 +17,18 @@ public class DeviceOwnershipRecord {
     @Column(nullable = false, unique = true)
     private String serialNumber;
 
-    private boolean stolen;
+    private String ownerName;
 
-    public Long getId() {
-        return id;
+    private String ownerEmail;
+
+    private LocalDate purchaseDate;
+
+    private LocalDate warrantyExpiration;
+
+    private Boolean active;
+
+    public DeviceOwnershipRecord() {
     }
 
-    public String getSerialNumber() {
-        return serialNumber;
-    }
-
-    public boolean isStolen() {
-        return stolen;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
-    public void setStolen(boolean stolen) {
-        this.stolen = stolen;
-    }
+    // getters and setters
 }

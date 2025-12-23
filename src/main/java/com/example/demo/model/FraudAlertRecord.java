@@ -1,47 +1,38 @@
-package com.example.demo.entity;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "fraud_alert_records")
+@Table(name = "fraud_alert_record")
 public class FraudAlertRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 🔥 REQUIRED FIELD (this fixes your crash)
-    @Column(nullable = false)
     private Long claimId;
 
-    @Column(nullable = false)
+    private String serialNumber;
+
+    private String alertType;
+
+    private String severity;
+
     private String message;
+
+    private LocalDateTime alertDate;
+
+    private Boolean resolved;
+
+    @PrePersist
+    protected void onCreate() {
+        this.alertDate = LocalDateTime.now();
+        this.resolved = false;
+    }
 
     public FraudAlertRecord() {
     }
 
-    public FraudAlertRecord(Long claimId, String message) {
-        this.claimId = claimId;
-        this.message = message;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getClaimId() {
-        return claimId;
-    }
-
-    public void setClaimId(Long claimId) {
-        this.claimId = claimId;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
+    // getters and setters
 }
