@@ -19,7 +19,9 @@ public class JwtTokenProvider {
     @Value("${jwt.expiration}")
     private long validityInMilliseconds;
 
-    // 🔐 Create JWT Token
+    // =====================================================
+    // ORIGINAL METHOD (used internally)
+    // =====================================================
     public String createToken(String email, List<String> roles) {
 
         Claims claims = Jwts.claims().setSubject(email);
@@ -36,7 +38,18 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // ✅ Validate JWT Token
+    // =====================================================
+    // ✅ OVERLOADED METHOD (FIXES YOUR ERROR)
+    // Called by AuthServiceImpl & UserServiceImpl
+    // =====================================================
+    public String createToken(Long userId, String email, List<String> roles) {
+        // userId kept for future auditing / extensibility
+        return createToken(email, roles);
+    }
+
+    // =====================================================
+    // TOKEN VALIDATION
+    // =====================================================
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
@@ -46,7 +59,9 @@ public class JwtTokenProvider {
         }
     }
 
-    // 📧 Extract email from token
+    // =====================================================
+    // CLAIM EXTRACTION
+    // =====================================================
     public String getEmail(String token) {
         return Jwts.parser()
                 .setSigningKey(secretKey)
@@ -55,7 +70,6 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    // 👮 Extract roles from token
     @SuppressWarnings("unchecked")
     public List<String> getRoles(String token) {
         return (List<String>) Jwts.parser()
@@ -65,7 +79,9 @@ public class JwtTokenProvider {
                 .get("roles");
     }
 
-    // 🆕 Resolve token from Authorization header
+    // =====================================================
+    // RESOLVE TOKEN FROM HEADER
+    // =====================================================
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
 
