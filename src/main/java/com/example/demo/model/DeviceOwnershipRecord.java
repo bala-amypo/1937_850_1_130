@@ -1,30 +1,53 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "device_ownership_records")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Table(name = "device_ownerships")
 public class DeviceOwnershipRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String deviceId;
+    private String serialNumber;
 
-    @Column(nullable = false)
-    private String ownerName;
+    private boolean active;
 
-    @Column(nullable = false)
-    private String ownerEmail;
+    private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    private String ownershipDate;
+    // Getters and Setters
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
