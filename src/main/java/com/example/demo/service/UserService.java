@@ -1,17 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.model.User;
-import java.util.List;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.RegisterRequest;
 
 public interface UserService {
 
-    User createUser(User user);
+    void registerUser(RegisterRequest req);
 
-    User getUserById(Long id);
-
-    User getUserByEmail(String email);
-
-    List<User> getAllUsers();
-
-    void deleteUser(Long id);
+    AuthResponse loginUser(LoginRequest req);
 }
