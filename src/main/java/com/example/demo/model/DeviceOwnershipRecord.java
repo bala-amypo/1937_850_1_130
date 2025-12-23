@@ -1,19 +1,19 @@
-package com.example.demo.model;
-
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-@Entity
-@Getter
-@Setter
-public class DeviceOwnership {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+// DeviceOwnershipRecord.java
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Entity
+public class DeviceOwnershipRecord {
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-
     private String serialNumber;
-    private String ownerName;
-    private String deviceType;
+    private Long userId;
+    private LocalDateTime ownershipDate;
+}
+
+// WarrantyClaimRecord.java
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Entity
+public class WarrantyClaimRecord {
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
+    private String serialNumber;
+    private Long claimId;
+    private String status;
 }
