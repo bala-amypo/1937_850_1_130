@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WarrantyClaimRepository extends JpaRepository<WarrantyClaimRecord, Long> {
-    // You can add custom query methods if needed
 }

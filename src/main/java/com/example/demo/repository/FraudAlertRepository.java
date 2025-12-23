@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FraudAlertRepository extends JpaRepository<FraudAlertRecord, Long> {
-    // Custom queries can be added here if needed
 }
