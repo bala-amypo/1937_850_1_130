@@ -8,13 +8,5 @@ public interface FraudAlertService {
 
     FraudAlertRecord createAlert(FraudAlertRecord alert);
 
-    void resolveAlert(long id);
-
-    List<FraudAlertRecord> getAlertsBySerial(String serialNumber);
-
-    List<FraudAlertRecord> getAlertsByClaim(long claimId);
-
-    FraudAlertRecord getAlertById(long id);
-
     List<FraudAlertRecord> getAllAlerts();
 }

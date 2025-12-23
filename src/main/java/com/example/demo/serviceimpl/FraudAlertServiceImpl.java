@@ -17,12 +17,12 @@ public class FraudAlertServiceImpl implements FraudAlertService {
     }
 
     @Override
-    public FraudAlertRecord save(FraudAlertRecord alert) {
+    public FraudAlertRecord createAlert(FraudAlertRecord alert) {
         return fraudAlertRepository.save(alert);
     }
 
     @Override
-    public List<FraudAlertRecord> findAll() {
+    public List<FraudAlertRecord> getAllAlerts() {
         return fraudAlertRepository.findAll();
     }
 }

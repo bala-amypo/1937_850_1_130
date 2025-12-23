@@ -1,29 +1,76 @@
 package com.example.demo.security;
 
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class JwtTokenProvider {
 
+    private final String SECRET_KEY = "THIS_IS_A_VERY_SECURE_SECRET_KEY_1234567890";
+    private final long EXPIRATION_TIME = 86400000; // 1 day
+
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    }
+
+    public String createToken(String email, List<String> roles) {
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("roles", roles);
+
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + EXPIRATION_TIME);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public boolean validateToken(String token) {
-        // implement token validation logic
-        return true;
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 
     public String getEmail(String token) {
-        // extract email from token
-        return "user@example.com";
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
-    public Set<String> getRoles(String token) {
-        // extract roles from token as Set
-        return Set.of("USER");
+    @SuppressWarnings("unchecked")
+    public List<String> getRoles(String token) {
+        return (List<String>) Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("roles");
     }
 
-    public String createToken(Long userId, String email, List<String> roles) {
-        // implement token creation logic using userId, email, roles
-        return "dummy-jwt-token";
+    // ✅ THIS WAS MISSING
+    public String resolveToken(HttpServletRequest request) {
+        String bearer = request.getHeader("Authorization");
+        if (bearer != null && bearer.startsWith("Bearer ")) {
+            return bearer.substring(7);
+        }
+        return null;
     }
 }
