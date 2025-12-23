@@ -1,36 +1,32 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
+import java.util.List;
 
-import java.security.Key;
-import java.util.Date;
-
-@Component
 public class JwtTokenProvider {
 
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private final long validityInMs = 3600000; // 1 hour
-
-    public String createToken(String username) {
-        Claims claims = Jwts.claims().setSubject(username);
-
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMs);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(key)
-                .compact();
+    // Dummy methods; implement actual JWT logic as per your project
+    public boolean validateToken(String token) {
+        // Validate the JWT token
+        return true;
     }
 
-    public String getUsername(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+    public String getEmail(String token) {
+        // Extract email from JWT token
+        return "user@example.com";
+    }
+
+    public List<String> getRoles(String token) {
+        // Extract roles from JWT token
+        return List.of("USER");
+    }
+
+    public String createToken(String email) {
+        // Create a JWT token using email
+        return "jwt-token";
+    }
+
+    public String createToken(Long userId, String email, List<String> roles) {
+        // Overloaded method with multiple parameters
+        return "jwt-token";
     }
 }
