@@ -1,10 +1,13 @@
 package com.example.demo.security;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.List;
 
@@ -17,29 +20,16 @@ public class JwtTokenProvider {
     @Value("${jwt.expiration}")
     private long validityInMilliseconds;
 
-    // ======================
-    // TOKEN CREATION (BASIC)
-    // ======================
-    public String createToken(String email, List<String> roles) {
-        Claims claims = Jwts.claims().setSubject(email);
-        claims.put("roles", roles);
+    private Key key;
 
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
-                .compact();
+    @PostConstruct
+    protected void init() {
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    // ======================
-    // TOKEN CREATION (WITH USER ID) ✅ FIX
-    // ======================
-    public String createToken(Long userId, String email, List<String> roles) {
-        Claims claims = Jwts.claims().setSubject(email);
+    // ✅ FINAL METHOD (matches service calls)
+    public String createToken(Long userId, String username, List<String> roles) {
+        Claims claims = Jwts.claims().setSubject(username);
         claims.put("userId", userId);
         claims.put("roles", roles);
 
@@ -50,45 +40,31 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // ======================
-    // TOKEN UTILITIES
-    // ======================
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 
-    public String getEmail(String token) {
-        return Jwts.parser()
-                .setSigningKey(secretKey)
+    public String getUsername(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
 
-    @SuppressWarnings("unchecked")
-    public List<String> getRoles(String token) {
-        return (List<String>) Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody()
-                .get("roles");
-    }
-
-    // ======================
-    // FIX FOR JwtAuthenticationFilter
-    // ======================
+    // ✅ REQUIRED FOR FILTER
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
