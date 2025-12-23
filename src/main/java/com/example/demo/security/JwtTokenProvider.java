@@ -3,90 +3,75 @@ package com.example.demo.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
 
 @Component
 public class JwtTokenProvider {
 
-    private static final long EXPIRATION_TIME = 86400000; // 1 day
-    private SecretKey secretKey;
+    @Value("${jwt.secret}")
+    private String secretKey;
 
-    @PostConstruct
-    protected void init() {
-        this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    }
+    @Value("${jwt.expiration}")
+    private long validityInMilliseconds;
 
-    /* ================= BASIC TOKEN ================= */
-
+    // 🔐 Create JWT Token
     public String createToken(String email, List<String> roles) {
+
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("roles", roles);
 
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + EXPIRATION_TIME);
+        Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(secretKey)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
-    /* ================= EXTENDED TOKEN ================= */
-
-    public String createToken(Long userId, String email, List<String> roles) {
-        Claims claims = Jwts.claims().setSubject(email);
-        claims.put("userId", userId);
-        claims.put("roles", roles);
-
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + EXPIRATION_TIME);
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(secretKey)
-                .compact();
-    }
-
-    /* ================= TOKEN VALIDATION ================= */
-
+    // ✅ Validate JWT Token
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
+    // 📧 Extract email from token
     public String getEmail(String token) {
-        return Jwts.parserBuilder()
+        return Jwts.parser()
                 .setSigningKey(secretKey)
-                .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
 
+    // 👮 Extract roles from token
     @SuppressWarnings("unchecked")
     public List<String> getRoles(String token) {
-        return (List<String>) Jwts.parserBuilder()
+        return (List<String>) Jwts.parser()
                 .setSigningKey(secretKey)
-                .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .get("roles");
+    }
+
+    // 🆕 Resolve token from Authorization header
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }
