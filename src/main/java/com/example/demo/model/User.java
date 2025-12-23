@@ -1,14 +1,13 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+@Data
 @Entity
-@Table(
-        name = "users",
-        uniqueConstraints = @UniqueConstraint(columnNames = "email")
-)
+@Table(name = "users")
 public class User {
 
     @Id
@@ -16,24 +15,11 @@ public class User {
     private Long id;
 
     private String name;
-
-    @Column(nullable = false, unique = true)
     private String email;
-
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles;
 
     private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public User() {
-    }
-
-    // getters and setters
 }
