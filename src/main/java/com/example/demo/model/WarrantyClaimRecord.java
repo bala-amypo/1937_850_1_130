@@ -1,21 +1,22 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
 @Entity
-@Table(name = "warranty_claims")
-public class WarrantyClaimRecord {
+@Getter
+@Setter
+public class WarrantyClaim {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String serialNumber;
-    private String claimReason;
+    private String customerName;
+    private String deviceType;
     private String status;
 
-    private LocalDateTime submittedAt;
+    // Add other fields if needed
 }
