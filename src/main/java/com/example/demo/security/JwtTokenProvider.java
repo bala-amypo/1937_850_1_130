@@ -15,14 +15,17 @@ public class JwtTokenProvider {
     private String secretKey;
 
     @Value("${jwt.expiration}")
-    private long validityInMs;
+    private long validityInMilliseconds;
 
+    // ======================
+    // TOKEN CREATION (BASIC)
+    // ======================
     public String createToken(String email, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("roles", roles);
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMs);
+        Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -32,6 +35,28 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    // ======================
+    // TOKEN CREATION (WITH USER ID) ✅ FIX
+    // ======================
+    public String createToken(Long userId, String email, List<String> roles) {
+        Claims claims = Jwts.claims().setSubject(email);
+        claims.put("userId", userId);
+        claims.put("roles", roles);
+
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + validityInMilliseconds);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+    }
+
+    // ======================
+    // TOKEN UTILITIES
+    // ======================
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
@@ -58,11 +83,14 @@ public class JwtTokenProvider {
                 .get("roles");
     }
 
-    //  THIS FIXED YOUR LAST ERROR
+    // ======================
+    // FIX FOR JwtAuthenticationFilter
+    // ======================
     public String resolveToken(HttpServletRequest request) {
-        String bearer = request.getHeader("Authorization");
-        if (bearer != null && bearer.startsWith("Bearer ")) {
-            return bearer.substring(7);
+        String bearerToken = request.getHeader("Authorization");
+
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
         }
         return null;
     }
