@@ -1,22 +1,30 @@
 package com.example.demo.model;
 
-import lombok.Getter;
-import lombok.Setter;
 import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
+@Table(name = "fraud_alert_records")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class FraudAlertRecord {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long claimId;         // <-- ensure this exists
-    private String serialNumber;  // <-- ensure this exists
+    private Long claimId;
 
-    private String description;
+    private String serialNumber;
 
-    // other fields...
+    private String alertType;
+
+    private String severity;
+
+    private String message;
+
+    private LocalDateTime alertDate;
+
+    private boolean resolved;
 }
