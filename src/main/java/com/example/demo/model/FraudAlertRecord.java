@@ -2,29 +2,26 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "fraud_alert_records")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class FraudAlertRecord {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long claimId;
+    @Column(nullable = false)
+    private String deviceId;
 
-    private String serialNumber;
-
+    @Column(nullable = false)
     private String alertType;
 
-    private String severity;
+    @Column(nullable = false)
+    private String alertDate;
 
-    private String message;
-
-    private LocalDateTime alertDate;
-
-    private boolean resolved;
 }

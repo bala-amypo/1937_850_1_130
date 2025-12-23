@@ -2,21 +2,26 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "stolen_device_reports")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class StolenDeviceReport {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String serialNumber;
+    @Column(nullable = false)
+    private String deviceId;
 
-    private String reportReason;
+    @Column(nullable = false)
+    private String reportedBy;
 
-    private LocalDateTime reportedAt;
+    @Column(nullable = false)
+    private String reportDate;
+
 }

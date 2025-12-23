@@ -1,27 +1,28 @@
-// User.java
 package com.example.demo.model;
 
+import jakarta.persistence.*;
 import lombok.*;
-import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Set;
 
+import java.util.List;
+
+@Entity
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private String email;
+    private String username;
+
     private String password;
 
-    @ElementCollection
-    private Set<String> roles;
+    private String email;
 
-    private LocalDateTime createdAt;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles;
 }

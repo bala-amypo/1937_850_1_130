@@ -8,16 +8,20 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class FraudRule {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String ruleCode;
+    @Column(nullable = false)
+    private String ruleName;
 
+    @Column(nullable = false)
     private String description;
 
-    private String ruleType;
+    @Column(nullable = false)
+    private Boolean isActive;
 
-    private boolean active;
 }

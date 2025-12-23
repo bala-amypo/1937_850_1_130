@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import lombok.*;
 
 @Entity
@@ -17,19 +16,15 @@ public class WarrantyClaimRecord {
     private Long id;
 
     @Column(nullable = false)
-    private String claimId;
-
-    @Column(nullable = false)
     private String deviceId;
 
     @Column(nullable = false)
-    private String customerName;
+    private String claimReason;
 
     @Column(nullable = false)
-    private LocalDateTime claimDate;
+    private String claimDate;
 
     @Column(nullable = false)
-    private boolean approved;
+    private Boolean isFraudulent;
 
-    // You can add more fields as needed
 }
