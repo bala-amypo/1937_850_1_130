@@ -2,8 +2,12 @@ package com.example.demo.repository;
 
 import com.example.demo.model.FraudAlertRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
+import java.util.List;
+
 public interface FraudAlertRepository extends JpaRepository<FraudAlertRecord, Long> {
+
+    List<FraudAlertRecord> findBySerialNumber(String serialNumber);
+
+    List<FraudAlertRecord> findByClaimId(Long claimId);
 }
