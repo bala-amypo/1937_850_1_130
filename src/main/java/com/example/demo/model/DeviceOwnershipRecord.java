@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import lombok.*;
 
 @Entity
@@ -26,7 +25,6 @@ public class DeviceOwnershipRecord {
     private String ownerEmail;
 
     @Column(nullable = false)
-    private LocalDateTime ownershipDate;
+    private String ownershipDate;
 
-    // You can add more fields as needed
 }
