@@ -1,40 +1,30 @@
 package com.example.demo.security;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter implements Filter {
 
-    @Autowired
-    private JwtTokenProvider tokenProvider;
+    private final JwtTokenProvider provider;
+    private final CustomUserDetailsService uds;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-        String token = getJwtFromRequest(request);
-
-        if (token != null && tokenProvider.validateToken(token)) {
-            String username = tokenProvider.getUsernameFromJWT(token);
-            // You can set authentication here if using Spring Security
-        }
-
-        filterChain.doFilter(request, response);
+    public JwtAuthenticationFilter(JwtTokenProvider p, CustomUserDetailsService u) {
+        provider = p; uds = u;
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
+
+        HttpServletRequest r = (HttpServletRequest) req;
+        String h = r.getHeader("Authorization");
+        if (h != null && h.startsWith("Bearer ")) {
+            String token = h.substring(7);
+            if (provider.validateToken(token)) {
+                provider.getEmail(token);
+                provider.getRoles(token);
+            }
         }
-        return null;
+        chain.doFilter(req, res);
     }
 }

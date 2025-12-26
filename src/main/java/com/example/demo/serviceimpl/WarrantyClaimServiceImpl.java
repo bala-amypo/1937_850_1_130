@@ -1,45 +1,56 @@
-package com.example.demo.serviceimpl;
+package com.example.demo.service.impl;
 
-import com.example.demo.model.FraudAlertRecord;
-import com.example.demo.model.WarrantyClaimRecord;
-import com.example.demo.repository.FraudAlertRepository;
-import com.example.demo.repository.WarrantyClaimRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
+import java.time.LocalDate;
+import java.util.*;
 
-import java.time.LocalDateTime;
-
-@Service
 public class WarrantyClaimServiceImpl {
 
-    @Autowired
-    private WarrantyClaimRepository warrantyClaimRepository;
+    private final WarrantyClaimRecordRepository claimRepo;
+    private final DeviceOwnershipRecordRepository deviceRepo;
+    private final StolenDeviceReportRepository stolenRepo;
+    private final FraudAlertRecordRepository alertRepo;
+    private final FraudRuleRepository ruleRepo;
 
-    @Autowired
-    private FraudAlertRepository fraudAlertRepository;
+    public WarrantyClaimServiceImpl(
+        WarrantyClaimRecordRepository c,
+        DeviceOwnershipRecordRepository d,
+        StolenDeviceReportRepository s,
+        FraudAlertRecordRepository a,
+        FraudRuleRepository r) {
 
-    public WarrantyClaimRecord submitClaim(WarrantyClaimRecord claim) {
-        claim.setSubmittedAt(LocalDateTime.now());
-        claim.setStatus("PENDING");
-        warrantyClaimRepository.save(claim);
-
-        // Generate fraud alert
-        FraudAlertRecord alert = new FraudAlertRecord();
-        alert.setClaimId(claim.getId());
-        alert.setSerialNumber(claim.getSerialNumber());
-        alert.setAlertType("WARRANTY_CLAIM");
-        alert.setSeverity("MEDIUM");
-        alert.setMessage(claim.getClaimReason());
-        alert.setAlertDate(LocalDateTime.now());
-        alert.setResolved(false);
-
-        fraudAlertRepository.save(alert);
-
-        return claim;
+        claimRepo = c; deviceRepo = d; stolenRepo = s; alertRepo = a; ruleRepo = r;
     }
 
-    public WarrantyClaimRecord updateClaimStatus(WarrantyClaimRecord claim, String status) {
-        claim.setStatus(status);
-        return warrantyClaimRepository.save(claim);
+    public WarrantyClaimRecord submitClaim(WarrantyClaimRecord c) {
+        DeviceOwnershipRecord d = deviceRepo.findBySerialNumber(c.getSerialNumber())
+                .orElseThrow();
+
+        boolean flag =
+            claimRepo.existsBySerialNumberAndClaimReason(c.getSerialNumber(), c.getClaimReason()) ||
+            d.getWarrantyExpiration().isBefore(LocalDate.now()) ||
+            stolenRepo.existsBySerialNumber(c.getSerialNumber());
+
+        if (flag) c.setStatus("FLAGGED");
+        return claimRepo.save(c);
+    }
+
+    public WarrantyClaimRecord updateClaimStatus(Long id, String s) {
+        WarrantyClaimRecord c = claimRepo.findById(id).orElseThrow();
+        c.setStatus(s);
+        return claimRepo.save(c);
+    }
+
+    public Optional<WarrantyClaimRecord> getClaimById(Long id) {
+        return claimRepo.findById(id);
+    }
+
+    public List<WarrantyClaimRecord> getAllClaims() {
+        return claimRepo.findAll();
+    }
+
+    public List<WarrantyClaimRecord> getClaimsBySerial(String s) {
+        return claimRepo.findBySerialNumber(s);
     }
 }

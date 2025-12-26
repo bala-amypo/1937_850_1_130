@@ -1,53 +1,28 @@
-package com.example.demo.serviceimpl;
+package com.example.demo.service.impl;
 
-import com.example.demo.model.FraudAlertRecord;
-import com.example.demo.repository.FraudAlertRepository;
-import com.example.demo.service.FraudAlertService;
-import org.springframework.stereotype.Service;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
+import java.util.*;
 
-import java.util.List;
+public class FraudAlertServiceImpl {
 
-@Service
-public class FraudAlertServiceImpl implements FraudAlertService {
+    private final FraudAlertRecordRepository repo;
 
-    private final FraudAlertRepository repository;
-
-    public FraudAlertServiceImpl(FraudAlertRepository repository) {
-        this.repository = repository;
+    public FraudAlertServiceImpl(FraudAlertRecordRepository r) {
+        repo = r;
     }
 
-    @Override
-    public FraudAlertRecord createAlert(FraudAlertRecord alert) {
-        return repository.save(alert);
+    public FraudAlertRecord createAlert(FraudAlertRecord a) {
+        return repo.save(a);
     }
 
-    @Override
-    public List<FraudAlertRecord> getAllAlerts() {
-        return repository.findAll();
+    public FraudAlertRecord resolveAlert(Long id) {
+        FraudAlertRecord a = repo.findById(id).orElseThrow();
+        a.setResolved(true);
+        return repo.save(a);
     }
 
-    @Override
-    public FraudAlertRecord getAlertById(Long id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    @Override
-    public List<FraudAlertRecord> getAlertsBySerial(String serialNumber) {
-        return repository.findBySerialNumber(serialNumber);
-    }
-
-    @Override
-    public List<FraudAlertRecord> getAlertsByClaim(Long claimId) {
-        return repository.findByClaimId(claimId);
-    }
-
-    @Override
-    public FraudAlertRecord resolveAlert(Long alertId) {
-        FraudAlertRecord alert = repository.findById(alertId).orElse(null);
-        if (alert != null) {
-            alert.setResolved(true);
-            return repository.save(alert);
-        }
-        return null;
+    public List<FraudAlertRecord> getAlertsByClaim(Long id) {
+        return repo.findByClaimId(id);
     }
 }
