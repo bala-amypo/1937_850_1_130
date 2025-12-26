@@ -1,52 +1,34 @@
-package com.example.demo.serviceimpl;
+package com.example.demo.service.impl;
 
-import com.example.demo.model.DeviceOwnershipRecord;
-import com.example.demo.repository.DeviceOwnershipRecordRepository;
-import com.example.demo.service.DeviceOwnershipService;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
+import java.util.*;
 
-import java.util.List;
-import java.util.NoSuchElementException;
+public class DeviceOwnershipServiceImpl {
 
-import org.springframework.stereotype.Service;
+    private final DeviceOwnershipRecordRepository repo;
 
-@Service
-public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
-
-    private final DeviceOwnershipRecordRepository deviceRepo;
-
-    public DeviceOwnershipServiceImpl(DeviceOwnershipRecordRepository deviceRepo) {
-        this.deviceRepo = deviceRepo;
+    public DeviceOwnershipServiceImpl(DeviceOwnershipRecordRepository repo) {
+        this.repo = repo;
     }
 
-    @Override
-    public DeviceOwnershipRecord registerDevice(DeviceOwnershipRecord device) {
-        if (deviceRepo.existsBySerialNumber(device.getSerialNumber())) {
-            throw new IllegalArgumentException("Duplicate serial number");
-        }
-        return deviceRepo.save(device);
+    public DeviceOwnershipRecord registerDevice(DeviceOwnershipRecord d) {
+        if (repo.existsBySerialNumber(d.getSerialNumber()))
+            throw new IllegalArgumentException();
+        return repo.save(d);
     }
 
-    @Override
-    public DeviceOwnershipRecord getBySerial(String serialNumber) {
-        return deviceRepo.findBySerialNumber(serialNumber)
-                .orElseThrow(() -> new NoSuchElementException("Device not found"));
+    public Optional<DeviceOwnershipRecord> getBySerial(String s) {
+        return repo.findBySerialNumber(s);
     }
 
-    @Override
-    public DeviceOwnershipRecord getById(Long id) {
-        return deviceRepo.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Device not found"));
-    }
-
-    @Override
     public List<DeviceOwnershipRecord> getAllDevices() {
-        return deviceRepo.findAll();
+        return repo.findAll();
     }
 
-    @Override
-    public void updateDeviceStatus(Long id, boolean active) {
-        DeviceOwnershipRecord device = getById(id);
-        device.setActive(active);
-        deviceRepo.save(device);
+    public DeviceOwnershipRecord updateDeviceStatus(Long id, boolean active) {
+        DeviceOwnershipRecord d = repo.findById(id).orElseThrow();
+        d.setActive(active);
+        return repo.save(d);
     }
 }
