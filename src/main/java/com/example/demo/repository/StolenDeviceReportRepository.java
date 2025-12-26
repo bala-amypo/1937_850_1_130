@@ -4,6 +4,12 @@ import com.example.demo.model.StolenDeviceReport;
 import java.util.List;
 
 public interface StolenDeviceReportRepository {
+
     StolenDeviceReport save(StolenDeviceReport report);
+
     List<StolenDeviceReport> findBySerialNumber(String serialNumber);
+
+    List<StolenDeviceReport> findAll();
+
+    boolean existsBySerialNumber(String serialNumber);
 }
