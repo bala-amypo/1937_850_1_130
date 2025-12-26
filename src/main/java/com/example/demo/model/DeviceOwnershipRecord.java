@@ -1,16 +1,22 @@
 package com.example.demo.model;
 
-import lombok.*;
 import java.time.LocalDate;
 
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
 public class DeviceOwnershipRecord {
 
     private Long id;
     private String serialNumber;
-    private String ownerName;
-    private String ownerEmail;
+    private boolean active;
     private LocalDate warrantyExpiration;
-    private Boolean active = true;
+
+    public String getSerialNumber() { return serialNumber; }
+    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
+
+    public LocalDate getWarrantyExpiration() { return warrantyExpiration; }
+    public void setWarrantyExpiration(LocalDate warrantyExpiration) {
+        this.warrantyExpiration = warrantyExpiration;
+    }
 }

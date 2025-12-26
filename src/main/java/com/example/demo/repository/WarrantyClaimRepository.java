@@ -1,7 +1,12 @@
+package com.example.demo.repository;
+
+import com.example.demo.model.WarrantyClaimRecord;
+import java.util.List;
+import java.util.Optional;
+
 public interface WarrantyClaimRecordRepository {
-    boolean existsBySerialNumberAndClaimReason(String s, String r);
+    WarrantyClaimRecord save(WarrantyClaimRecord claim);
     Optional<WarrantyClaimRecord> findById(Long id);
     List<WarrantyClaimRecord> findAll();
-    List<WarrantyClaimRecord> findBySerialNumber(String s);
-    WarrantyClaimRecord save(WarrantyClaimRecord c);
+    List<WarrantyClaimRecord> findBySerialNumber(String serialNumber);
 }

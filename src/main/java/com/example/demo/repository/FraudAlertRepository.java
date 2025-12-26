@@ -1,5 +1,9 @@
+package com.example.demo.repository;
+
+import com.example.demo.model.FraudAlertRecord;
+import java.util.List;
+
 public interface FraudAlertRecordRepository {
-    Optional<FraudAlertRecord> findById(Long id);
-    List<FraudAlertRecord> findByClaimId(Long id);
-    FraudAlertRecord save(FraudAlertRecord a);
+    FraudAlertRecord save(FraudAlertRecord alert);
+    List<FraudAlertRecord> findByClaimId(Long claimId);
 }

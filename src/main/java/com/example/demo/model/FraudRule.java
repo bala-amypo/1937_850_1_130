@@ -1,13 +1,13 @@
 package com.example.demo.model;
 
-import lombok.*;
-
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
 public class FraudRule {
-    private Long id;
+
     private String ruleCode;
-    private String ruleType;
-    private String description;
-    private Boolean active = true;
+    private boolean active;
+
+    public String getRuleCode() { return ruleCode; }
+    public void setRuleCode(String ruleCode) { this.ruleCode = ruleCode; }
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
 }

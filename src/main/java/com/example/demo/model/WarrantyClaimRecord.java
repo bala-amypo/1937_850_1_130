@@ -1,15 +1,24 @@
 package com.example.demo.model;
 
-import lombok.*;
 import java.time.LocalDateTime;
 
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
 public class WarrantyClaimRecord {
 
     private Long id;
     private String serialNumber;
     private String claimReason;
-    private String status = "PENDING";
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private String status;
+    private LocalDateTime submittedAt;
+
+    public String getSerialNumber() { return serialNumber; }
+    public void setSerialNumber(String serialNumber) { this.serialNumber = serialNumber; }
+
+    public String getClaimReason() { return claimReason; }
+    public void setClaimReason(String claimReason) { this.claimReason = claimReason; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public LocalDateTime getSubmittedAt() { return submittedAt; }
+    public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
 }
