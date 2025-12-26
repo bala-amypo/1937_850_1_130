@@ -5,8 +5,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WarrantyClaimRecordRepository {
+
     WarrantyClaimRecord save(WarrantyClaimRecord claim);
+
     Optional<WarrantyClaimRecord> findById(Long id);
-    List<WarrantyClaimRecord> findAll();
+
+    boolean existsBySerialNumberAndClaimReason(String serialNumber, String claimReason);
+
     List<WarrantyClaimRecord> findBySerialNumber(String serialNumber);
 }
