@@ -1,27 +1,37 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
-import java.util.*;
+import com.example.demo.model.StolenDeviceReport;
+import com.example.demo.repository.DeviceOwnershipRecordRepository;
+import com.example.demo.repository.StolenDeviceReportRepository;
+import com.example.demo.service.StolenDeviceService;
 
-public class StolenDeviceServiceImpl {
+import java.util.List;
+
+public class StolenDeviceServiceImpl implements StolenDeviceService {
 
     private final StolenDeviceReportRepository repo;
     private final DeviceOwnershipRecordRepository deviceRepo;
 
-    public StolenDeviceServiceImpl(StolenDeviceReportRepository r, DeviceOwnershipRecordRepository d) {
-        repo = r; deviceRepo = d;
+    public StolenDeviceServiceImpl(
+            StolenDeviceReportRepository repo,
+            DeviceOwnershipRecordRepository deviceRepo) {
+
+        this.repo = repo;
+        this.deviceRepo = deviceRepo;
     }
 
-    public StolenDeviceReport reportStolen(StolenDeviceReport r) {
-        deviceRepo.findBySerialNumber(r.getSerialNumber()).orElseThrow();
-        return repo.save(r);
+    @Override
+    public StolenDeviceReport reportStolen(StolenDeviceReport report) {
+        deviceRepo.findBySerialNumber(report.getSerialNumber()).orElseThrow();
+        return repo.save(report);
     }
 
-    public List<StolenDeviceReport> getReportsBySerial(String s) {
-        return repo.findBySerialNumber(s);
+    @Override
+    public List<StolenDeviceReport> getReportsBySerial(String serialNumber) {
+        return repo.findBySerialNumber(serialNumber);
     }
 
+    @Override
     public List<StolenDeviceReport> getAllReports() {
         return repo.findAll();
     }

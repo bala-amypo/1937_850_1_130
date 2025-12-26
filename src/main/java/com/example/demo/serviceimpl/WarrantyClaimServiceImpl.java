@@ -1,11 +1,15 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.*;
+import com.example.demo.model.DeviceOwnershipRecord;
+import com.example.demo.model.WarrantyClaimRecord;
 import com.example.demo.repository.*;
-import java.time.LocalDate;
-import java.util.*;
+import com.example.demo.service.WarrantyClaimService;
 
-public class WarrantyClaimServiceImpl {
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+public class WarrantyClaimServiceImpl implements WarrantyClaimService {
 
     private final WarrantyClaimRecordRepository claimRepo;
     private final DeviceOwnershipRecordRepository deviceRepo;
@@ -14,43 +18,58 @@ public class WarrantyClaimServiceImpl {
     private final FraudRuleRepository ruleRepo;
 
     public WarrantyClaimServiceImpl(
-        WarrantyClaimRecordRepository c,
-        DeviceOwnershipRecordRepository d,
-        StolenDeviceReportRepository s,
-        FraudAlertRecordRepository a,
-        FraudRuleRepository r) {
+            WarrantyClaimRecordRepository claimRepo,
+            DeviceOwnershipRecordRepository deviceRepo,
+            StolenDeviceReportRepository stolenRepo,
+            FraudAlertRecordRepository alertRepo,
+            FraudRuleRepository ruleRepo) {
 
-        claimRepo = c; deviceRepo = d; stolenRepo = s; alertRepo = a; ruleRepo = r;
+        this.claimRepo = claimRepo;
+        this.deviceRepo = deviceRepo;
+        this.stolenRepo = stolenRepo;
+        this.alertRepo = alertRepo;
+        this.ruleRepo = ruleRepo;
     }
 
-    public WarrantyClaimRecord submitClaim(WarrantyClaimRecord c) {
-        DeviceOwnershipRecord d = deviceRepo.findBySerialNumber(c.getSerialNumber())
-                .orElseThrow();
+    @Override
+    public WarrantyClaimRecord submitClaim(WarrantyClaimRecord claim) {
+        DeviceOwnershipRecord device =
+                deviceRepo.findBySerialNumber(claim.getSerialNumber())
+                        .orElseThrow();
 
-        boolean flag =
-            claimRepo.existsBySerialNumberAndClaimReason(c.getSerialNumber(), c.getClaimReason()) ||
-            d.getWarrantyExpiration().isBefore(LocalDate.now()) ||
-            stolenRepo.existsBySerialNumber(c.getSerialNumber());
+        boolean flagged =
+                claimRepo.existsBySerialNumberAndClaimReason(
+                        claim.getSerialNumber(), claim.getClaimReason()
+                ) ||
+                device.getWarrantyExpiration().isBefore(LocalDate.now()) ||
+                stolenRepo.existsBySerialNumber(claim.getSerialNumber());
 
-        if (flag) c.setStatus("FLAGGED");
-        return claimRepo.save(c);
+        if (flagged) {
+            claim.setStatus("FLAGGED");
+        }
+
+        return claimRepo.save(claim);
     }
 
-    public WarrantyClaimRecord updateClaimStatus(Long id, String s) {
-        WarrantyClaimRecord c = claimRepo.findById(id).orElseThrow();
-        c.setStatus(s);
-        return claimRepo.save(c);
+    @Override
+    public WarrantyClaimRecord updateClaimStatus(Long id, String status) {
+        WarrantyClaimRecord claim = claimRepo.findById(id).orElseThrow();
+        claim.setStatus(status);
+        return claimRepo.save(claim);
     }
 
+    @Override
     public Optional<WarrantyClaimRecord> getClaimById(Long id) {
         return claimRepo.findById(id);
     }
 
+    @Override
     public List<WarrantyClaimRecord> getAllClaims() {
         return claimRepo.findAll();
     }
 
-    public List<WarrantyClaimRecord> getClaimsBySerial(String s) {
-        return claimRepo.findBySerialNumber(s);
+    @Override
+    public List<WarrantyClaimRecord> getClaimsBySerial(String serialNumber) {
+        return claimRepo.findBySerialNumber(serialNumber);
     }
 }

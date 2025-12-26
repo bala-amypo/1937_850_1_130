@@ -1,10 +1,13 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.model.*;
-import com.example.demo.repository.*;
-import java.util.*;
+import com.example.demo.model.DeviceOwnershipRecord;
+import com.example.demo.repository.DeviceOwnershipRecordRepository;
+import com.example.demo.service.DeviceOwnershipService;
 
-public class DeviceOwnershipServiceImpl {
+import java.util.List;
+import java.util.Optional;
+
+public class DeviceOwnershipServiceImpl implements DeviceOwnershipService {
 
     private final DeviceOwnershipRecordRepository repo;
 
@@ -12,23 +15,28 @@ public class DeviceOwnershipServiceImpl {
         this.repo = repo;
     }
 
-    public DeviceOwnershipRecord registerDevice(DeviceOwnershipRecord d) {
-        if (repo.existsBySerialNumber(d.getSerialNumber()))
-            throw new IllegalArgumentException();
-        return repo.save(d);
+    @Override
+    public DeviceOwnershipRecord registerDevice(DeviceOwnershipRecord device) {
+        if (repo.existsBySerialNumber(device.getSerialNumber())) {
+            throw new IllegalArgumentException("Device already exists");
+        }
+        return repo.save(device);
     }
 
-    public Optional<DeviceOwnershipRecord> getBySerial(String s) {
-        return repo.findBySerialNumber(s);
+    @Override
+    public Optional<DeviceOwnershipRecord> getBySerial(String serialNumber) {
+        return repo.findBySerialNumber(serialNumber);
     }
 
+    @Override
     public List<DeviceOwnershipRecord> getAllDevices() {
         return repo.findAll();
     }
 
+    @Override
     public DeviceOwnershipRecord updateDeviceStatus(Long id, boolean active) {
-        DeviceOwnershipRecord d = repo.findById(id).orElseThrow();
-        d.setActive(active);
-        return repo.save(d);
+        DeviceOwnershipRecord device = repo.findById(id).orElseThrow();
+        device.setActive(active);
+        return repo.save(device);
     }
 }
