@@ -1,39 +1,42 @@
 package com.example.demo.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
+@Table(name = "users")
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String name;
     private String email;
     private String password;
-    private String name;
-    private Set<String> roles = new HashSet<>(); // must be Set<String> for AuthController
-    private LocalDateTime createdAt; // needed for TestResultListener
 
-    // Default constructor
-    public User() {}
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new HashSet<>();
 
-    // Builder-style constructor (optional, if using builder pattern)
-    public User(Long id, String email, String password, String name, Set<String> roles, LocalDateTime createdAt) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.roles = roles;
-        this.createdAt = createdAt;
-    }
+    private LocalDateTime createdAt;
 
     // ---------------- Getters and Setters ----------------
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -52,14 +55,6 @@ public class User {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Set<String> getRoles() {
         return roles;
     }
@@ -74,10 +69,5 @@ public class User {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    // Optional: add helper method to add a single role
-    public void addRole(String role) {
-        this.roles.add(role);
     }
 }
