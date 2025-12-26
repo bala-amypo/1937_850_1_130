@@ -1,12 +1,11 @@
 package com.example.demo.dto;
 
-import lombok.Data;
-import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class AuthRequest {
-    private String name;
     private String email;
     private String password;
-    private Set<String> roles;
 }
