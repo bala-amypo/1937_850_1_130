@@ -1,35 +1,26 @@
-package com.example.demo.serviceimpl;
+package com.example.demo.service.impl;
 
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.security.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.example.demo.service.UserService;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
-@Service
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository repo;
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    public User createUser(User user, Set<String> rolesSet) {
-        List<String> rolesList = new ArrayList<>(rolesSet); // fix Set -> List
-        user.setRoles(rolesList);
-        user.setCreatedAt(LocalDateTime.now());
-
-        return userRepository.save(user);
+    public UserServiceImpl(UserRepository repo) {
+        this.repo = repo;
     }
 
-    public String generateToken(User user) {
-        List<String> rolesList = user.getRoles(); // already List
-        return jwtTokenProvider.createToken(user.getId(), user.getEmail(), rolesList);
+    @Override
+    public User saveUser(User user) {
+        return repo.save(user);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return repo.findByEmail(email);
     }
 }
