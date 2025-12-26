@@ -2,32 +2,35 @@ package com.example.demo.controller;
 
 import com.example.demo.model.FraudAlertRecord;
 import com.example.demo.service.impl.FraudAlertServiceImpl;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/alerts")
+@RequestMapping("/fraud-alerts")
 public class FraudAlertController {
 
-    private final FraudAlertServiceImpl alertService;
+    private final FraudAlertServiceImpl fraudAlertService;
 
-    public FraudAlertController(FraudAlertServiceImpl alertService) {
-        this.alertService = alertService;
+    public FraudAlertController(FraudAlertServiceImpl fraudAlertService) {
+        this.fraudAlertService = fraudAlertService;
     }
 
-    @PostMapping("/create")
-    public FraudAlertRecord createAlert(@RequestBody FraudAlertRecord alert) {
-        return alertService.createAlert(alert);
+    @GetMapping("/claim/{claimId}")
+    public ResponseEntity<List<FraudAlertRecord>> getAlertsByClaim(@PathVariable Long claimId) {
+        return ResponseEntity.ok(fraudAlertService.getAlertsByClaim(claimId));
     }
 
-    @PutMapping("/{id}/resolve")
-    public FraudAlertRecord resolveAlert(@PathVariable Long id) {
-        return alertService.resolveAlert(id);
+    @PostMapping
+    public ResponseEntity<FraudAlertRecord> createAlert(@RequestBody FraudAlertRecord alert) {
+        FraudAlertRecord saved = fraudAlertService.createAlert(alert);
+        return ResponseEntity.ok(saved);
     }
 
-    @GetMapping("/by-claim/{claimId}")
-    public List<FraudAlertRecord> getAlertsByClaim(@PathVariable Long claimId) {
-        return alertService.getAlertsByClaim(claimId);
+    @PutMapping("/resolve/{id}")
+    public ResponseEntity<FraudAlertRecord> resolveAlert(@PathVariable Long id) {
+        FraudAlertRecord resolved = fraudAlertService.resolveAlert(id);
+        return ResponseEntity.ok(resolved);
     }
 }

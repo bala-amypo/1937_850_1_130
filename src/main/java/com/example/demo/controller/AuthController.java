@@ -22,8 +22,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                          JwtTokenProvider jwtTokenProvider) {
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -36,18 +35,24 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        User user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .roles(request.getRoles())
-                .name(request.getName())
-                .build();
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setName(request.getName());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRoles(request.getRoles()); // must be Set<String>
 
-        user = userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(), user.getRoles());
+        String token = jwtTokenProvider.createToken(
+                savedUser.getId(), 
+                savedUser.getEmail(), 
+                savedUser.getRoles() // Set<String>
+        );
 
-        return ResponseEntity.ok(new AuthResponse(token));
+        AuthResponse response = new AuthResponse();
+        response.setToken(token);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
@@ -62,7 +67,15 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(), user.getRoles());
-        return ResponseEntity.ok(new AuthResponse(token));
+        String token = jwtTokenProvider.createToken(
+                user.getId(), 
+                user.getEmail(), 
+                user.getRoles() // Set<String>
+        );
+
+        AuthResponse response = new AuthResponse();
+        response.setToken(token);
+
+        return ResponseEntity.ok(response);
     }
 }
