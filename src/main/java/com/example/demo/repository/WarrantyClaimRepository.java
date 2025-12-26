@@ -13,4 +13,6 @@ public interface WarrantyClaimRecordRepository {
     boolean existsBySerialNumberAndClaimReason(String serialNumber, String claimReason);
 
     List<WarrantyClaimRecord> findBySerialNumber(String serialNumber);
+
+    List<WarrantyClaimRecord> findAll();
 }
