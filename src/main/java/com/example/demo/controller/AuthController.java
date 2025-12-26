@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/auth")
@@ -39,19 +39,17 @@ public class AuthController {
         user.setEmail(request.getEmail());
         user.setName(request.getName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRoles(request.getRoles()); // must be Set<String>
+        user.setRoles(new HashSet<>(request.getRoles())); // convert List -> Set
 
         User savedUser = userRepository.save(user);
 
         String token = jwtTokenProvider.createToken(
-                savedUser.getId(), 
-                savedUser.getEmail(), 
-                savedUser.getRoles() // Set<String>
+                savedUser.getId(),
+                savedUser.getEmail(),
+                savedUser.getRoles()
         );
 
-        AuthResponse response = new AuthResponse();
-        response.setToken(token);
-
+        AuthResponse response = new AuthResponse(token);
         return ResponseEntity.ok(response);
     }
 
@@ -68,14 +66,12 @@ public class AuthController {
         }
 
         String token = jwtTokenProvider.createToken(
-                user.getId(), 
-                user.getEmail(), 
-                user.getRoles() // Set<String>
+                user.getId(),
+                user.getEmail(),
+                user.getRoles()
         );
 
-        AuthResponse response = new AuthResponse();
-        response.setToken(token);
-
+        AuthResponse response = new AuthResponse(token);
         return ResponseEntity.ok(response);
     }
 }
