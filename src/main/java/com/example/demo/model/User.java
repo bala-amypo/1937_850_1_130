@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 public class User {
@@ -9,12 +10,23 @@ public class User {
     private String email;
     private String password;
     private String name;
-    private Set<String> roles; // ensure it's a Set, not List
+    private Set<String> roles = new HashSet<>(); // must be Set<String> for AuthController
+    private LocalDateTime createdAt; // needed for TestResultListener
 
-    // Add this field for TestResultListener
-    private LocalDateTime createdAt;
+    // Default constructor
+    public User() {}
 
-    // Getters and setters for all fields
+    // Builder-style constructor (optional, if using builder pattern)
+    public User(Long id, String email, String password, String name, Set<String> roles, LocalDateTime createdAt) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.roles = roles;
+        this.createdAt = createdAt;
+    }
+
+    // ---------------- Getters and Setters ----------------
 
     public Long getId() {
         return id;
@@ -56,12 +68,16 @@ public class User {
         this.roles = roles;
     }
 
-    // --- Paste the createdAt getter/setter here ---
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    // Optional: add helper method to add a single role
+    public void addRole(String role) {
+        this.roles.add(role);
     }
 }
